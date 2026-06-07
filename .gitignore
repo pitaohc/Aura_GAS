@@ -1,16 +1,48 @@
-Binaries
-DerivedDataCache
-Intermediate
-Saved
-Build
-
-.vscode
-.vs
-*.VC.db
-*.opensdf
-*.opendb
-*.sdf
+# ---- Unreal Engine 核心目录 ----
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+# 如果使用云存储（如 Perforce）排除 Configs
+# Configs/
+# ---- 引擎特定临时文件 ----
 *.sln
 *.suo
-*.xcodeproj
+*.opensdf
+*.sdf
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+# ---- 编译输出 ----
+*.VC.VC.opendb
+*.pdb
+*.ilk
+*.log
+*.idb
+*.obj
+*.lib
+*.exp
+# ---- 项目特定配置 ----
+# 排除自动生成的项目文件
+.vs/
+.idea/
+*.vcxproj
+*.vcxproj.filters
+*.sln
+*.sln.docstates
 *.xcworkspace
+*.xcuserdata
+# ---- 编辑器和工具临时文件 ----
+*.swp
+*.tmp
+*.bak
+*.orig
+# ---- 配置文件（可选）----
+# 如果需要版本控制配置，注释掉下面两行
+Configs/DefaultEngine.ini
+Configs/DefaultGame.ini
+# ---- 操作系统生成文件 ----
+Thumbs.db
+.DS_Store
+Desktop.ini
