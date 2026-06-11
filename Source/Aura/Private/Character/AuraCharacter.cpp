@@ -13,7 +13,7 @@ AAuraCharacter::AAuraCharacter()
 	UCharacterMovementComponent* movement = GetCharacterMovement();
 	
 	movement->bOrientRotationToMovement = true;
-	movement->RotationRate = FRotator(0.0f,400.0f,0.0f); // TODO: make this a variable and set it in the editor
+	movement->RotationRate = RotatorRateDefault;
 	movement->bConstrainToPlane = true;
 	movement->bSnapToPlaneAtStart = true;
 	
