@@ -4,9 +4,18 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
+
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	
+	this->CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -47,5 +56,38 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	{
 		ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	// 进行射线检测，获取鼠标位置下的Actor
+	FHitResult CursorResult;
+	// TODO GetHitResultUnderCursor, GetHitResultUnderCursorByChannel, GetHitResultUnderCursorForObjects 对比
+	// 三个参数：碰撞通道，是否复杂碰撞，结果
+	GetHitResultUnderCursor(ECC_Visibility,false,CursorResult);
+	if (!CursorResult.bBlockingHit) return;
+	
+	// 修改记录结果
+	LastActor = ThisActor;
+	ThisActor = CursorResult.GetActor();
+	
+	// TODO 此处有异常 比较记录变化，调用高亮
+	const bool HasLastActor = LastActor.GetObject() != nullptr;
+	const bool HasThisActor = ThisActor.GetObject() != nullptr;
+	const bool IsSameActor = ThisActor.GetObject() == LastActor.GetObject();
+	
+	if (HasLastActor && HasThisActor && !IsSameActor) // 如果上一个和当前都有，并且不相同
+	{
+		LastActor.GetInterface()->UnHighLightActor();
+		ThisActor.GetInterface()->HighLightActor();
+	}
+	else if (HasLastActor && !HasThisActor) // 如果上一个有，当前没有
+	{
+		LastActor.GetInterface()->UnHighLightActor();
+	}
+	else if (!HasLastActor && HasThisActor) // 如果上一个没有，当前有
+	{
+		ThisActor.GetInterface()->HighLightActor();
 	}
 }

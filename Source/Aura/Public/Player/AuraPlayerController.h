@@ -8,6 +8,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class IEnemyInterface;
 struct FInputActionValue;
 /**
  * 
@@ -18,8 +19,11 @@ class AURA_API AAuraPlayerController : public APlayerController
 	GENERATED_BODY()
 public:
 	AAuraPlayerController();
+	virtual void PlayerTick(float DeltaTime) override;
 protected:
 	virtual void BeginPlay() override; // 不允许外部调用，但允许继承
+	void Move(const FInputActionValue& InputActionValue);
+	void CursorTrace();
 	
 	UPROPERTY(EditAnywhere, category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
@@ -27,5 +31,8 @@ protected:
 	UPROPERTY(EditAnywhere, category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 	
-	void Move(const FInputActionValue& InputActionValue);
+	// TODO TScriptInterface 的作用是什么？与TObjectPtr有什么区别？使用场景是什么？
+	TScriptInterface<IEnemyInterface> LastActor;
+	TScriptInterface<IEnemyInterface> ThisActor;
+	
 };
