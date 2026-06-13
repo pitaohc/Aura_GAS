@@ -3,6 +3,8 @@
 
 #include "Character/AuraEnemy.h"
 
+#include "Aura/Aura.h"
+
 
 // Sets default values
 AAuraEnemy::AAuraEnemy()
@@ -32,10 +34,14 @@ void AAuraEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AAuraEnemy::HighLightActor()
 {
-	bHighLighted = true;
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED); // 当前版本与模板值无关
+	weapon->SetRenderCustomDepth(true);
+	weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
 void AAuraEnemy::UnHighLightActor()
 {
-	bHighLighted = false;
+	GetMesh()->SetRenderCustomDepth(false);
+	weapon->SetRenderCustomDepth(false);
 }
