@@ -30,6 +30,12 @@ void AAuraEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AAuraEnemy::HighLightActor() {}
+void AAuraEnemy::HighLightActor()
+{
+	bHighLighted = true;
+}
 
-void AAuraEnemy::UnHighLightActor() {}
+void AAuraEnemy::UnHighLightActor()
+{
+	bHighLighted = false;
+}
