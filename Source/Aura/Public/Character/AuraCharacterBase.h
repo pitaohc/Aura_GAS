@@ -13,15 +13,12 @@ class UAttributeSet;
 UCLASS()
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
-public:
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-private:
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AAuraCharacterBase();
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	virtual void BeginPlay() override;

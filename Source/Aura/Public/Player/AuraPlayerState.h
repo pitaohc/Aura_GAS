@@ -16,14 +16,11 @@ class UAttributeSet;
 UCLASS()
 class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
 {
-public:
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-private:
 	GENERATED_BODY()
 
 public:
 	AAuraPlayerState();
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override
 
 protected:
 	UPROPERTY()
