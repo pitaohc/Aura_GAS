@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "AuraCharacterBase.generated.h"
 
+class UAuraAbilitySystemComponent;
+class UAttributeSet;
+
 UCLASS()
 class AURA_API AAuraCharacterBase : public ACharacter
 {
@@ -22,5 +25,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> weapon;
 
-
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAttributeSet> AttributeSet;
 };
