@@ -67,12 +67,14 @@ void AAuraPlayerController::CursorTrace()
 	// 三个参数：碰撞通道，是否复杂碰撞，结果
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorResult);
 	if (!CursorResult.bBlockingHit)
+	{
 		return;
+	}
 
 	// 修改记录结果
 	LastActor = ThisActor;
 	ThisActor = CursorResult.GetActor();
-	
+
 	const bool HasLastActor = LastActor.GetInterface() != nullptr;
 	const bool HasThisActor = ThisActor.GetInterface() != nullptr;
 	const bool IsSameActor = ThisActor == LastActor;
