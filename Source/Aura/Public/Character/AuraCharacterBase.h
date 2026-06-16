@@ -19,6 +19,7 @@ public:
 	// Sets default values for this character's properties
 	AAuraCharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAttributeSet*           GetAttributeSet() const { return AttributeSet; }
 
 protected:
 	virtual void BeginPlay() override;
