@@ -6,7 +6,11 @@
 #include "AbilitySystemComponent.h"
 #include "Net/UnrealNetwork.h"
 
-UAuraAttributeSet::UAuraAttributeSet() {}
+UAuraAttributeSet::UAuraAttributeSet()
+{
+	// TODO: 此处血量硬编码，之后会移动至Gameplay Effect中
+	InitHealth(100.0f);
+}
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
