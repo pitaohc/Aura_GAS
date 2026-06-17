@@ -4,7 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
 #include "AuraAttributeSet.generated.h"
+#define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
+	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 /**
  * 
@@ -20,6 +26,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes", ReplicatedUsing= OnRep_Health)
 	FGameplayAttributeData Health;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UPROPERTY(BlueprintReadOnly, Category = "Vital Attributes", ReplicatedUsing= OnRep_MaxHealth)
