@@ -7,7 +7,7 @@
 #include "AuraEffectActor.generated.h"
 
 class USphereComponent;
-class UMeshComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
