@@ -9,7 +9,10 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	// TODO: 此处血量硬编码，之后会移动至Gameplay Effect中
-	InitHealth(100.0f);
+	InitHealth(50.0f);
+	InitMaxHealth(100.0f);
+	InitMana(50.0f);
+	InitMaxMana(100.0f);
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
