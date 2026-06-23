@@ -24,14 +24,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-          
-      - name: Configure GitHub CLI authentication
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          echo "$GH_TOKEN" | gh auth login --with-token
-          gh auth status
-          
+
       - name: Run opencode
         uses: anomalyco/opencode/github@latest
         env:
