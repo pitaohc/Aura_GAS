@@ -5,12 +5,29 @@
 #include "Blueprint/UserWidget.h"
 
 // 此处需要头文件，避免调用CreateWidget时找不到类型导致报错。
+#include "UI/Controller/OverlayWidgetController.h"
 #include "UI/Widget/AuraUserWidget.h"
 
-void AAuraHUD::BeginPlay()
+UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& Params)
 {
-	Super::BeginPlay();
-	
-	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(),OverlayWidgetClass);
+	if (OverlayWidgetController == nullptr)
+	{
+		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
+		OverlayWidgetController->SetWidgetControllerParams(Params);
+	}
+	return OverlayWidgetController;
+}
+
+void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
+{
+	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class uninitialized, please fill out BP_AuraHUD"));
+	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class uninitialized, please fill out BP_AuraHUD"));
+
+	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
+	OverlayWidget = Cast<UAuraUserWidget>(Widget);
+	const FWidgetControllerParams params = FWidgetControllerParams(PC, PS, ASC, AS);
+	UOverlayWidgetController*     Controller = GetOverlayWidgetController(params);
+	OverlayWidget->SetWidgetController(Controller);
+
 	Widget->AddToViewport();
 }
