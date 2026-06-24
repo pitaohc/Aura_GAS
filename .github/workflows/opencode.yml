@@ -16,14 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
-      pull-requests: read
+      contents: write
+      pull-requests: write
       issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          persist-credentials: false
+          persist-credentials: true
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email "opencode@github.com"
+          git config --global user.name "OpenCode Agent"
 
       - name: Run opencode
         uses: anomalyco/opencode/github@latest
