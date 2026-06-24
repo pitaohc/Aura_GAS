@@ -1,0 +1,84 @@
+name: Format C++ on PR
+
+on:
+  pull_request:
+    types: [ready_for_review]
+  issue_comment:
+    types: [created]
+
+jobs:
+  format:
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'issue_comment' && 
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '/format'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get changed C++ files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            # 对于评论触发，获取 PR 的所有变更文件
+            PR_NUMBER=$(gh pr view ${{ github.event.issue.number }} --json number -q number)
+            FILES=$(gh pr diff $PR_NUMBER --name-only | grep -E '\.(h|cpp|hpp|inl|c|cc)$' || true)
+          else
+            # 对于 PR 事件，获取 PR 中变更的文件
+            FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(h|cpp|hpp|inl|c|cc)$' || true)
+          fi
+          
+          if [ -z "$FILES" ]; then
+            echo "has_cpp_files=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_cpp_files=true" >> $GITHUB_OUTPUT
+            echo "$FILES" > /tmp/changed_files.txt
+            echo "Changed C++ files:"
+            cat /tmp/changed_files.txt
+          fi
+
+      - name: Install clang-format
+        if: steps.changed-files.outputs.has_cpp_files == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+
+      - name: Format C++ files
+        if: steps.changed-files.outputs.has_cpp_files == 'true'
+        run: |
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              clang-format -i "$file"
+              echo "Formatted: $file"
+            fi
+          done < /tmp/changed_files.txt
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No formatting changes needed."
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Formatting changes detected:"
+            git diff --stat
+          fi
+
+      - name: Commit formatting changes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "style: auto-format C++ files"
+          git push
