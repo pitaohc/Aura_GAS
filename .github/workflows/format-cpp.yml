@@ -2,14 +2,14 @@ name: Format C++ on PR
 
 on:
   pull_request:
-    types: [ready_for_review]
+    types: [opened, synchronize]
   issue_comment:
     types: [created]
 
 jobs:
   format:
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
+      (github.event_name == 'pull_request') ||
       (github.event_name == 'issue_comment' && 
        github.event.issue.pull_request &&
        contains(github.event.comment.body, '/format'))
@@ -52,9 +52,35 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y clang-format
 
-      - name: Format C++ files
-        if: steps.changed-files.outputs.has_cpp_files == 'true'
+      - name: Check formatting (PR event)
+        if: github.event_name == 'pull_request' && steps.changed-files.outputs.has_cpp_files == 'true'
         run: |
+          echo "Checking formatting..."
+          FAILED=false
+          while IFS= read -r file; do
+            if [ -f "$file" ]; then
+              if ! clang-format --dry-run --Werror "$file" 2>/dev/null; then
+                FAILED=true
+                echo "::error file=$file::Format check failed: $file"
+                echo "Expected format:"
+                clang-format "$file" | head -20
+                echo "..."
+              fi
+            fi
+          done < /tmp/changed_files.txt
+          
+          if [ "$FAILED" = true ]; then
+            echo ""
+            echo "::error::Format check failed. Please run 'clang-format -i' on the files above, or use /format command."
+            exit 1
+          fi
+          
+          echo "Format check passed."
+
+      - name: Format and commit (comment event)
+        if: github.event_name == 'issue_comment' && steps.changed-files.outputs.has_cpp_files == 'true'
+        run: |
+          echo "Formatting C++ files..."
           while IFS= read -r file; do
             if [ -f "$file" ]; then
               clang-format -i "$file"
@@ -62,23 +88,18 @@ jobs:
             fi
           done < /tmp/changed_files.txt
 
-      - name: Check for changes
-        id: check-changes
+      - name: Check for changes and commit
+        if: github.event_name == 'issue_comment'
         run: |
           if git diff --quiet; then
-            echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No formatting changes needed."
           else
-            echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "Formatting changes detected:"
             git diff --stat
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add -A
+            git commit -m "style: auto-format C++ files"
+            git push
+            echo "Format commit pushed successfully."
           fi
-
-      - name: Commit formatting changes
-        if: steps.check-changes.outputs.has_changes == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "style: auto-format C++ files"
-          git push
