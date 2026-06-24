@@ -1,6 +1,5 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "UI/Controller/AuraWidgetController.h"
 
 void UAuraWidgetController::SetWidgetControllerParams(const FWidgetControllerParams& Params)
@@ -12,3 +11,5 @@ void UAuraWidgetController::SetWidgetControllerParams(const FWidgetControllerPar
 }
 
 void UAuraWidgetController::BroadcastInitialValue() {}
+
+void UAuraWidgetController::BindCallbacksToDependencies() {}

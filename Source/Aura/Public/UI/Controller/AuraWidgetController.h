@@ -16,10 +16,9 @@ struct FWidgetControllerParams
 	FWidgetControllerParams() {}
 
 	FWidgetControllerParams(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
-		: PlayerController(PC)
-		, PlayerState(PS)
-		, AbilitySystemComponent(ASC)
-		, AttributeSet(AS) {}
+		: PlayerController(PC), PlayerState(PS), AbilitySystemComponent(ASC), AttributeSet(AS)
+	{
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
@@ -34,7 +33,7 @@ struct FWidgetControllerParams
 };
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UAuraWidgetController : public UObject
@@ -43,21 +42,21 @@ class AURA_API UAuraWidgetController : public UObject
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetWidgetControllerParams(const FWidgetControllerParams& Params);
+	void		 SetWidgetControllerParams(const FWidgetControllerParams& Params);
 	virtual void BroadcastInitialValue();
+	virtual void BindCallbacksToDependencies();
+
 protected:
 	// 此处使用UE的基础类型而非项目类型，目的是增强适应性。
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
 
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<APlayerState> PlayerState;
-
-
 };
