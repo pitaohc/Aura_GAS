@@ -11,7 +11,7 @@ class USphereComponent;
 class UStaticMeshComponent;
 
 UENUM(BlueprintType)
-enum class EEfectApplicationPolicy : uint8
+enum class EEffectApplicationPolicy : uint8
 {
 	ApplyOnOverlap,
 	ApplyOnEndOverlap,
@@ -19,7 +19,7 @@ enum class EEfectApplicationPolicy : uint8
 };
 
 UENUM(BlueprintType)
-enum class EEfectRemovePolicy : uint8
+enum class EEffectRemovePolicy : uint8
 {
 	RemoveOnEndOverlap,
 	DoNotRemove,
@@ -54,20 +54,20 @@ protected:
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	EEfectApplicationPolicy InstantApplicationPolicy = EEfectApplicationPolicy::DoNotApply;
+	EEffectApplicationPolicy InstantApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	EEfectApplicationPolicy DurationApplicationPolicy = EEfectApplicationPolicy::DoNotApply;
+	EEffectApplicationPolicy DurationApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	TSubclassOf<UGameplayEffect> InfiniteGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	EEfectApplicationPolicy InfiniteApplicationPolicy = EEfectApplicationPolicy::DoNotApply;
+	EEffectApplicationPolicy InfiniteApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
-	EEfectRemovePolicy InfiniteRemovePolicy = EEfectRemovePolicy::RemoveOnEndOverlap;
+	EEffectRemovePolicy InfiniteRemovePolicy = EEffectRemovePolicy::RemoveOnEndOverlap;
 };
