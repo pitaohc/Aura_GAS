@@ -30,3 +30,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	const FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1, EffectContext);
 	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 }
+
+void AAuraEffectActor::OnOverlap(AActor* TargetActor) {}
+
+void AAuraEffectActor::OnEndOverlap(AActor* TargetActor) {}
