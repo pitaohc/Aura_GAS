@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemLog.h"
 
 AAuraEffectActor::AAuraEffectActor()
 {
@@ -19,6 +20,11 @@ void AAuraEffectActor::BeginPlay()
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (!GameplayEffectClass)
+	{
+		UE_LOG(LogGameplayEffects, Warning, TEXT("GameplayEffectClass is invalid"));
+		return;
+	}
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (!TargetASC)
 	{
