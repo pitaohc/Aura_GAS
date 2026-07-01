@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemLog.h"
 
 AAuraEffectActor::AAuraEffectActor()
 {
@@ -19,6 +20,11 @@ void AAuraEffectActor::BeginPlay()
 
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (!GameplayEffectClass)
+	{
+		UE_LOG(LogGameplayEffects, Warning, TEXT("GameplayEffectClass is invalid"));
+		return;
+	}
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (!TargetASC)
 	{
@@ -31,6 +37,26 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 }
 
-void AAuraEffectActor::OnOverlap(AActor* TargetActor) {}
+void AAuraEffectActor::OnOverlap(AActor* TargetActor)
+{
+	if (InstantApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+	if (DurationApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
+}
 
-void AAuraEffectActor::OnEndOverlap(AActor* TargetActor) {}
+void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
+{
+	if (InstantApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+	if (DurationApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
+}
