@@ -34,7 +34,14 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	FGameplayEffectContextHandle EffectContext = TargetASC->MakeEffectContext();
 	EffectContext.AddSourceObject(this);
 	const FGameplayEffectSpecHandle SpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1, EffectContext);
-	TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	FActiveGameplayEffectHandle		ActiveHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+
+	bool bIsInfinite = SpecHandle.Data->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
+
+	if (bIsInfinite && InfiniteRemovePolicy == EEffectRemovePolicy::RemoveOnEndOverlap)
+	{
+		ActiveEffects.Add(ActiveHandle, TargetASC);
+	}
 }
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
@@ -47,6 +54,10 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 	{
 		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
 	}
+	if (InfiniteApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	}
 }
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
@@ -58,5 +69,31 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 	if (DurationApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
+	}
+	if (InfiniteApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	}
+	if (InfiniteRemovePolicy == EEffectRemovePolicy::RemoveOnEndOverlap)
+	{
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+		if (!TargetASC)
+		{
+			return;
+		}
+		TArray<FActiveGameplayEffectHandle> ActiveHandlesToRemove;
+
+		for (const auto& Pair : ActiveEffects)
+		{
+			if (TargetASC == Pair.Value)
+			{
+				TargetASC->RemoveActiveGameplayEffect(Pair.Key, 1);
+				ActiveHandlesToRemove.Add(Pair.Key);
+			}
+		}
+		for (const auto& Handle : ActiveHandlesToRemove)
+		{
+			ActiveEffects.FindAndRemoveChecked(Handle);
+		}
 	}
 }

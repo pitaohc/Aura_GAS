@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "AuraEffectActor.generated.h"
 
+class UAbilitySystemComponent;
 class UGameplayEffect;
 class USphereComponent;
 class UStaticMeshComponent;
@@ -46,6 +48,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void OnEndOverlap(AActor* TargetActor);
+
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffects;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Applied Effects")
 	bool bDestroyOnEndOverlap = false;
