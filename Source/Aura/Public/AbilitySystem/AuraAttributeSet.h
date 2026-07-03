@@ -22,18 +22,18 @@ struct FEffectProperties
 	FGameplayEffectContextHandle EffectContextHandle;
 	// Target ASC, Character, Controller, Actor
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> TargetASC;
 	UPROPERTY()
-	TObjectPtr<AActor> TargetActor;
+	TObjectPtr<AActor> TargetAvatarActor;
 	UPROPERTY()
 	TObjectPtr<ACharacter> TargetCharacter;
 	UPROPERTY()
 	TObjectPtr<AController> TargetController;
 	// Source ASC, Character, Controller, Actor
 	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> SourceASC;
 	UPROPERTY()
-	TObjectPtr<AActor> SourceActor;
+	TObjectPtr<AActor> SourceAvatarActor;
 	UPROPERTY()
 	TObjectPtr<ACharacter> SourceCharacter;
 	UPROPERTY()
@@ -85,5 +85,5 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 private:
-	void CreateEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Prop) const;
+	void CreateEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };
