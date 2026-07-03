@@ -12,6 +12,34 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName)               \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT()
+struct FEffectProperties
+{
+	GENERATED_BODY()
+
+	FEffectProperties() {}
+
+	FGameplayEffectContextHandle EffectContextHandle;
+	// Target ASC, Character, Controller, Actor
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent;
+	UPROPERTY()
+	TObjectPtr<AActor> TargetActor;
+	UPROPERTY()
+	TObjectPtr<ACharacter> TargetCharacter;
+	UPROPERTY()
+	TObjectPtr<AController> TargetController;
+	// Source ASC, Character, Controller, Actor
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
+	UPROPERTY()
+	TObjectPtr<AActor> SourceActor;
+	UPROPERTY()
+	TObjectPtr<ACharacter> SourceCharacter;
+	UPROPERTY()
+	TObjectPtr<AController> SourceController;
+};
+
 /**
  *
  */
@@ -53,4 +81,9 @@ public:
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+private:
+	void CreateEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Prop) const;
 };

@@ -3,6 +3,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 
 #include "AbilitySystemComponent.h"
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -59,4 +60,22 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 		float max = GetMaxMana();
 		NewValue = FMath::Clamp(NewValue, min, max);
 	}
+}
+
+void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	FEffectProperties EffectProperties;
+	CreateEffectProperties(Data, EffectProperties);
+}
+
+void UAuraAttributeSet::CreateEffectProperties(
+	const FGameplayEffectModCallbackData& Data, FEffectProperties& Prop) const
+{
+	Prop.EffectContextHandle = Data.EffectSpec.GetContext();
+	// GetContext() 和 GetEffectContext() 是同一个函数的两个名字，任选其一即可，项目内保持统一。建议使用 GetContext
+	// TODO 设置 Source
+
+	// TODO 设置 Target
 }
