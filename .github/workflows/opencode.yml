@@ -36,5 +36,5 @@ jobs:
           XIAOMI_API_KEY: ${{ secrets.XIAOMI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          model: xiaomi-token-plan-cn/mimo-v2.5
+          model: xiaomi/mimo-v2.5
           use_github_token: true
