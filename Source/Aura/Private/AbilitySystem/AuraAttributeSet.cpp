@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AbilitySystem/AuraAttributeSet.h"
 
 #include "AbilitySystemComponent.h"
@@ -43,4 +42,21 @@ void UAuraAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UAuraAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, MaxMana, OldMaxMana);
+}
+
+void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	if (Attribute == GetHealthAttribute())
+	{
+		float min = .0f;
+		float max = GetMaxHealth();
+		NewValue = FMath::Clamp(NewValue, min, max);
+	}
+	if (Attribute == GetManaAttribute())
+	{
+		float min = .0f;
+		float max = GetMaxMana();
+		NewValue = FMath::Clamp(NewValue, min, max);
+	}
 }
