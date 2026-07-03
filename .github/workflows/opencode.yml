@@ -34,7 +34,8 @@ jobs:
         uses: anomalyco/opencode/github@latest
         env:
           XIAOMI_API_KEY: ${{ secrets.XIAOMI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          model: xiaomi-token-plan-cn/mimo-v2.5
+          model: ${{ vars.MODEL_NAME }}
           use_github_token: true
