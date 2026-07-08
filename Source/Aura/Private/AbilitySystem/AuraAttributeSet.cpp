@@ -64,6 +64,23 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	}
 }
 
+void UAuraAttributeSet::PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const
+{
+	Super::PreAttributeBaseChange(Attribute, NewValue);
+	if (Attribute == GetHealthAttribute())
+	{
+		float min = .0f;
+		float max = GetMaxHealth();
+		NewValue = FMath::Clamp(NewValue, min, max);
+	}
+	if (Attribute == GetManaAttribute())
+	{
+		float min = .0f;
+		float max = GetMaxMana();
+		NewValue = FMath::Clamp(NewValue, min, max);
+	}
+}
+
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
