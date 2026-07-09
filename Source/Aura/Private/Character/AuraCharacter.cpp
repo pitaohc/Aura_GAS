@@ -1,14 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Character/AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
-
 
 // Sets default values
 AAuraCharacter::AAuraCharacter()
@@ -24,14 +23,12 @@ AAuraCharacter::AAuraCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
-
 }
 
 // Called when the game starts or when spawned
 void AAuraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
@@ -68,7 +65,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(AuraPlayerState, this);
-
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
 	{
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
