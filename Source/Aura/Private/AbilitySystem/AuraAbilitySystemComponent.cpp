@@ -9,7 +9,7 @@ void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* Target,
 	const FGameplayEffectSpec&											 SpecApplied,
-	FActiveGameplayEffectHandle											 ActiveHandle) const
+	FActiveGameplayEffectHandle											 ActiveHandle)
 {
 	// GEngine->AddOnScreenDebugMessage(1, 8.0f, FColor::Green, FString("Effect Applied!"));
 	FGameplayTagContainer TagContainer;
