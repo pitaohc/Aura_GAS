@@ -19,11 +19,11 @@ public:
 	// Sets default values for this character's properties
 	AAuraCharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	virtual UAttributeSet*           GetAttributeSet() const { return AttributeSet; }
+	virtual UAttributeSet*			 GetAttributeSet() const { return AttributeSet; }
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void InitAbilityActorInfo();
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> weapon;
 
