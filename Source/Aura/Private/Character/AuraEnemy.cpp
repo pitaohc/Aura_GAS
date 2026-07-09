@@ -31,7 +31,10 @@ void AAuraEnemy::BeginPlay()
 void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->AbilityActorInfoSet();
+	}
 }
 
 // Called every frame
