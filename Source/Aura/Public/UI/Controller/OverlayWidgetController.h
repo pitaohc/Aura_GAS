@@ -60,7 +60,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnMaxManaChangedSignature OnMaxManaChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Message")
 	FMessageWidgetRowDelegate MessageWidgetRowDelegate;
 
 protected:

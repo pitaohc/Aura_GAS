@@ -31,11 +31,12 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
 	{
-		AuraASC->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& TagContainer) {
+		FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(TEXT("Message"));
+		check(MessageWidgetDataTable);
+		AuraASC->EffectAssetTags.AddLambda([this,MessageTag](const FGameplayTagContainer& TagContainer) {
 			for (const FGameplayTag& Tag : TagContainer)
 			{
-				FGameplayTag message = FGameplayTag::RequestGameplayTag(TEXT("Message"));
-				if (!Tag.MatchesTag(message))
+				if (!Tag.MatchesTag(MessageTag))
 				{
 					continue;
 				}
