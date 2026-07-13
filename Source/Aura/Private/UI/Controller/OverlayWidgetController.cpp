@@ -31,21 +31,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
 	{
-		AuraASC->EffectAssetTags.AddLambda([this](const FGameplayTagContainer& TagContainer) {
+		FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(TEXT("Message"));
+		check(MessageWidgetDataTable);
+		AuraASC->EffectAssetTags.AddLambda([this,MessageTag](const FGameplayTagContainer& TagContainer) {
 			for (const FGameplayTag& Tag : TagContainer)
 			{
-				// const FString Msg = FString::Printf(TEXT("Widget GE Tag: %s"), *Tag.ToString());
-				// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, Msg);
-				FUIWidgetRow* row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
-				if (row)
+				if (!Tag.MatchesTag(MessageTag))
+				{
+					continue;
+				}
+				if (FUIWidgetRow* row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag))
 				{
 					const FString Msg = FString::Printf(TEXT("Widget GE Tag: %s"), *row->Message.ToString());
 					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, Msg);
-				}
-				else
-				{
-					const FString Msg = FString::Printf(TEXT("No row found for tag %s"), *Tag.ToString());
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, Msg);
+					MessageWidgetRowDelegate.Broadcast(*row);
 				}
 			}
 		});
