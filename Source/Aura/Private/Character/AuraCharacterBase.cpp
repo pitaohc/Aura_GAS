@@ -31,6 +31,8 @@ void AAuraCharacterBase::InitAbilityActorInfo() {}
 
 void AAuraCharacterBase::InitializePrimaryAttributes() const
 {
+	check(DefaultPrimaryAttributeEffect);
+	check(GetAbilitySystemComponent());
 	const auto ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	const auto SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(
 		DefaultPrimaryAttributeEffect, 1, ContextHandle);
