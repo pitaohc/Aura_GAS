@@ -17,6 +17,8 @@ public:
 	AAuraEnemy();
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	int32 Level = 1;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
@@ -33,4 +35,9 @@ public:
 
 	virtual void UnHighLightActor() override;
 	/** Enemy Interface End*/
+	
+	/** Combat Interface */
+	FORCEINLINE virtual int32 GetPlayerLevel() const override;
+
+	/** Combat Interface End*/
 };
