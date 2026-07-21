@@ -31,16 +31,16 @@ void AAuraCharacterBase::InitAbilityActorInfo() {}
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
-	InitializeAttributes(DefaultPrimaryAttributeEffect);
-	InitializeAttributes(DefaultSecondaryAttributeEffect);
+	InitializeAttributes(DefaultPrimaryAttributeEffect, 1.0f);
+	InitializeAttributes(DefaultSecondaryAttributeEffect, 1.0f);
 }
 
-void AAuraCharacterBase::InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass) const
+void AAuraCharacterBase::InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
 	check(IsValid(GetAbilitySystemComponent()));
 	check(GameplayEffectClass);
 	auto ContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 	ContextHandle.AddSourceObject(this);
-	const auto SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, 1, ContextHandle);
+	const auto SpecHandle = GetAbilitySystemComponent()->MakeOutgoingSpec(GameplayEffectClass, Level, ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), GetAbilitySystemComponent());
 }

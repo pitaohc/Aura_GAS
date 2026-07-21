@@ -41,5 +41,5 @@ protected:
 
 	void InitializeDefaultAttributes() const;
 
-	void InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass) const;
+	void InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 };
