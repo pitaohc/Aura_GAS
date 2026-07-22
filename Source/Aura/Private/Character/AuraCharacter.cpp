@@ -78,3 +78,10 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 	InitializeDefaultAttributes();
 }
+
+int32 AAuraCharacter::GetPlayerLevel() const
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(IsValid(AuraPlayerState));
+	return AuraPlayerState->GetPlayerLevel();
+}
