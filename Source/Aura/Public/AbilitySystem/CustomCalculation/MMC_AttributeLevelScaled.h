@@ -28,10 +28,4 @@ private:
 	float AttributeScale = 1.0f;
 	UPROPERTY(EditAnywhere)
 	FGameplayEffectAttributeCaptureDefinition AttributeDef;
-
-	/** 打印 ASC 的完整诊断信息（属性列表、目标属性值等） */
-	void DebugPrintASCInfo(const UAbilitySystemComponent* ASC, const FString& ASCLabel) const;
-
-	/** 打印 Spec 中已注册和已捕获的属性信息 */
-	void DebugPrintSpecCaptureInfo(const FGameplayEffectSpec& Spec) const;
 };
