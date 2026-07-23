@@ -14,5 +14,9 @@ float UMMC_AttributeLevelScaled::CalculateBaseMagnitude_Implementation(const FGa
 	FString info = FString::Format(
 		TEXT("Attribute: {0}, Source: {1}, Snapshot: {2}"), { AttributeName, CaptureSource, IsSnapshot });
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, info);
+	
+	const FGameplayTagContainer* SourceContainer = Spec.CapturedSourceTags.GetAggregatedTags();
+	const FGameplayTagContainer* TargetContainer = Spec.CapturedTargetTags.GetAggregatedTags();
+	
 	return Super::CalculateBaseMagnitude_Implementation(Spec);
 }
