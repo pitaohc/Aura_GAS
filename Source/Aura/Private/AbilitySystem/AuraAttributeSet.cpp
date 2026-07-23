@@ -8,13 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
-UAuraAttributeSet::UAuraAttributeSet()
-{
-	// TODO: 此处血量硬编码，之后会移动至Gameplay Effect中
-	InitHealth(50.0f);
-
-	InitMana(50.0f);
-}
+UAuraAttributeSet::UAuraAttributeSet() {}
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
