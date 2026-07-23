@@ -33,8 +33,6 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	InitializeAttributes(DefaultPrimaryAttributeEffect, 1.0f);
 	InitializeAttributes(DefaultSecondaryAttributeEffect, 1.0f);
-	InitializeAttributes(DefaultMaxHealthAttributeEffect, 1.0f);
-	InitializeAttributes(DefaultMaxManaAttributeEffect, 1.0f);
 }
 
 void AAuraCharacterBase::InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const

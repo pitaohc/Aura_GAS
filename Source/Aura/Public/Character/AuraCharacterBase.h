@@ -40,12 +40,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributeEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultMaxHealthAttributeEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultMaxManaAttributeEffect;
-
 	void InitializeDefaultAttributes() const;
 
 	void InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
