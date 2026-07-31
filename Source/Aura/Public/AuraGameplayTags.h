@@ -7,7 +7,7 @@
 /**
  * 
  */
-class AURA_API FAuraGameplayTags
+class FAuraGameplayTags
 {
 public:
 	static FAuraGameplayTags& Get()
@@ -22,7 +22,6 @@ public:
 	FAuraGameplayTags(FAuraGameplayTags&&) = delete;
 	FAuraGameplayTags& operator=(FAuraGameplayTags&&) = delete;
 private:
-	static FAuraGameplayTags GameplayTags;
 	FAuraGameplayTags() = default;
 	~FAuraGameplayTags() = default;
 };
