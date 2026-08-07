@@ -4,11 +4,19 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
 
-UAuraAttributeSet::UAuraAttributeSet() {}
+UAuraAttributeSet::UAuraAttributeSet()
+{
+	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
+	TagsToAttributes.Add(Tags.Attributes_Primary_Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Primary_Vigor, GetVigorAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Primary_Resilience, GetResilienceAttribute);
+}
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
