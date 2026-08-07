@@ -13,15 +13,14 @@ void UAttributeMenuWidgetController::BroadcastInitialValue()
 	UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfoDataAsset)
 
-		FAuraAttributeInfo StrengthInfo = AttributeInfoDataAsset->FindAttributeInfoByTag(
-			FAuraGameplayTags::Get().Attributes_Primary_Strength);
-	StrengthInfo.AttributeValue = AuraAttributeSet->GetStrength();
-	AttributeInfoDelegate.Broadcast(StrengthInfo);
-
-	FAuraAttributeInfo IntelligenceInfo = AttributeInfoDataAsset->FindAttributeInfoByTag(
-		FAuraGameplayTags::Get().Attributes_Primary_Intelligence);
-	IntelligenceInfo.AttributeValue = AuraAttributeSet->GetIntelligence();
-	AttributeInfoDelegate.Broadcast(IntelligenceInfo);
+		for (const auto& pair : AuraAttributeSet->TagsToAttributes)
+	{
+		const FGameplayTag&		  AttributeTag = pair.Key;
+		const FGameplayAttribute& Attribute = pair.Value();
+		FAuraAttributeInfo		  Info = AttributeInfoDataAsset->FindAttributeInfoByTag(AttributeTag);
+		Info.AttributeValue = Attribute.GetNumericValue(AuraAttributeSet);
+		AttributeInfoDelegate.Broadcast(Info);
+	}
 }
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
