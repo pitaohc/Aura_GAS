@@ -17,6 +17,11 @@ void UAttributeMenuWidgetController::BroadcastInitialValue()
 			FAuraGameplayTags::Get().Attributes_Primary_Strength);
 	StrengthInfo.AttributeValue = AuraAttributeSet->GetStrength();
 	AttributeInfoDelegate.Broadcast(StrengthInfo);
+
+	FAuraAttributeInfo IntelligenceInfo = AttributeInfoDataAsset->FindAttributeInfoByTag(
+		FAuraGameplayTags::Get().Attributes_Primary_Intelligence);
+	IntelligenceInfo.AttributeValue = AuraAttributeSet->GetIntelligence();
+	AttributeInfoDelegate.Broadcast(IntelligenceInfo);
 }
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
