@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeSet.h"
 #include "AuraWidgetController.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
 #include "AttributeMenuWidgetController.generated.h"
@@ -21,6 +22,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValue() override;
 	virtual void BindCallbacksToDependencies() override;
+private:
+	void         BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

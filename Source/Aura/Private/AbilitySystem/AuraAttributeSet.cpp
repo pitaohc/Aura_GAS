@@ -12,10 +12,23 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
+	// Primary Attribute
 	TagsToAttributes.Add(Tags.Attributes_Primary_Strength, GetStrengthAttribute);
 	TagsToAttributes.Add(Tags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
 	TagsToAttributes.Add(Tags.Attributes_Primary_Vigor, GetVigorAttribute);
 	TagsToAttributes.Add(Tags.Attributes_Primary_Resilience, GetResilienceAttribute);
+	
+	// Secondary Attribute
+	TagsToAttributes.Add(Tags.Attributes_Secondary_Armor, GetArmorAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_ArmorPenetration, GetArmorPenetrationAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_BlockChance, GetBlockChanceAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_CriticalHitChance,GetCriticalHitChanceAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_CriticalHitDamage,GetCriticalHitDamageAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_CriticalHitResistance,GetCriticalHitResistanceAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_HealthRegeneration,GetHealthRegenerationAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_ManaRegeneration,GetManaRegenerationAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_MaxHealth,GetMaxHealthAttribute);
+	TagsToAttributes.Add(Tags.Attributes_Secondary_MaxMana,GetMaxManaAttribute);
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
