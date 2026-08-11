@@ -23,6 +23,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet*			 GetAttributeSet() const { return AttributeSet; }
 
+	void AddCharacterAbilities();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
@@ -31,6 +33,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
@@ -42,6 +45,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributeEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 
 	void InitializeDefaultAttributes() const;
 
