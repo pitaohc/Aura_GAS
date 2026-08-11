@@ -6,21 +6,22 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags,const FGameplayTagContainer& /* AssetTags */)
-
-/**
- *
- */
-UCLASS()
+	/**
+	 *
+	 */
+	UCLASS()
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
 public:
 	void AbilityActorInfoSet();
+	void AddCharacterAbilities(const TArray<TSubclassOf<class UGameplayAbility>>& Array);
 
 	FEffectAssetTags EffectAssetTags;
+
 protected:
 	void EffectApplied(UAbilitySystemComponent* Target,
 		const FGameplayEffectSpec&				SpecApplied,

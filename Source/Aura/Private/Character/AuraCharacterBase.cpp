@@ -3,6 +3,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
@@ -19,6 +20,16 @@ AAuraCharacterBase::AAuraCharacterBase()
 	weapon = CreateDefaultSubobject<USkeletalMeshComponent>("weapon"); // 相当于 make_ptr
 	weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void AAuraCharacterBase::AddCharacterAbilities()
+{
+	if (!HasAuthority())
+		return;
+
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+
+	AuraASC->AddCharacterAbilities(StartupAbilities);
 }
 
 // Called when the game starts or when spawned
