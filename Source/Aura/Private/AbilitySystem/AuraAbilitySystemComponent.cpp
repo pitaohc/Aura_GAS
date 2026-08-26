@@ -15,6 +15,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 	{
 		FGameplayAbilitySpec spec{ ability, 1 };
 		GiveAbilityAndActivateOnce(spec);
+		
 	}
 }
 

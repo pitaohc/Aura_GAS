@@ -15,7 +15,7 @@ struct FAuraInputAction
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	const UInputAction* InputAction;
+	const UInputAction* InputAction = nullptr;
 	UPROPERTY(EditDefaultsOnly)
 	FGameplayTag InputTag;
 };
@@ -28,11 +28,12 @@ class AURA_API UAuraInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
 
-private:
+public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FAuraInputAction> InputActions;
 
-public:
+
+	UFUNCTION(BlueprintCallable)
 	const TArray<FAuraInputAction>& GetInputActions() const { return InputActions; }
 	const UInputAction*				GetInputActionByTag(const FGameplayTag& InputTag, bool bLogNotFound = false) const;
 };
