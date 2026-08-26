@@ -49,4 +49,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	Tags.Attributes_Secondary_MaxMana = Manager.AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"), FString("法力上限"));
+
+	Tags.InputTag_LMB = Manager.AddNativeGameplayTag(FName("InputTag.LMB"), FString("Input Tag for Left Mouse Button"));
+	Tags.InputTag_RMB = Manager.AddNativeGameplayTag(
+		FName("InputTag.RMB"), FString("Input Tag for Right Mouse Button"));
+	Tags.InputTag_1 = Manager.AddNativeGameplayTag(FName("InputTag.1"), FString("Input Tag for Keyboard 1"));
+	Tags.InputTag_2 = Manager.AddNativeGameplayTag(FName("InputTag.2"), FString("Input Tag for Keyboard 2"));
+	Tags.InputTag_3 = Manager.AddNativeGameplayTag(FName("InputTag.3"), FString("Input Tag for Keyboard 3"));
+	Tags.InputTag_4 = Manager.AddNativeGameplayTag(FName("InputTag.4"), FString("Input Tag for Keyboard 4"));
 }
