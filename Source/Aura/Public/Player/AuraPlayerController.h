@@ -6,12 +6,13 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+struct FGameplayTag;
 class UInputMappingContext;
 class UInputAction;
 class IEnemyInterface;
 struct FInputActionValue;
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -24,8 +25,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override; // 不允许外部调用，但允许继承
-	void         Move(const FInputActionValue& InputActionValue);
-	void         CursorTrace();
+	void		 Move(const FInputActionValue& InputActionValue);
+	void		 CursorTrace();
 
 	UPROPERTY(EditAnywhere, category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
@@ -37,4 +38,10 @@ protected:
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> ThisActor;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<class UAuraInputConfig> AuraInputConfig;
+
+	void AbilityInputTagPressed(const FGameplayTag InputTag);
+	void AbilityInputTagReleased(const FGameplayTag InputTag);
+	void AbilityInputTagHeld(const FGameplayTag InputTag);
 };
