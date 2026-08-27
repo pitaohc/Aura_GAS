@@ -1,9 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/AuraPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
@@ -119,6 +122,11 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 	// 	5.f,
 	// 	FColor::Green,
 	// 	FString::Printf(TEXT("AbilityInputTagReleased: %s"), *InputTag.ToString()));
+
+	if (UAuraAbilitySystemComponent* ASC = GetASC())
+	{
+		ASC->AbilityInputTagReleased(InputTag);
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
@@ -128,4 +136,18 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	// 	0.0f,
 	// 	FColor::Green,
 	// 	FString::Printf(TEXT("AbilityInputTagHeld: %s"), *InputTag.ToString()));
+	if (UAuraAbilitySystemComponent* ASC = GetASC())
+	{
+		ASC->AbilityInputTagHeld(InputTag);
+	}
+}
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
+{
+	if (AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraAbilitySystemComponent;
 }
