@@ -25,6 +25,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 
 	this->CursorTrace();
+	this->AutoRun();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -150,8 +151,9 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 				for (const FVector& Point : NavigationPath->PathPoints)
 				{
 					Spline->AddSplinePoint(Point, ESplineCoordinateSpace::World);
-					// DrawDebugSphere(GetWorld(), Point, 8.0f, 8, FColor::Green, false, 5.0f);
+					DrawDebugSphere(GetWorld(), Point, 8.0f, 8, FColor::Green, false, 5.0f);
 				}
+				CachedDestination = NavigationPath->PathPoints.Last();
 				bAutoRunning = true;
 			}
 		}
@@ -203,4 +205,27 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
 	}
 	return AuraAbilitySystemComponent;
+}
+
+void AAuraPlayerController::AutoRun()
+{
+	if (!bAutoRunning)
+	{
+		return ;
+	}
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		// 获得位置
+		const FVector& Location = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(),ESplineCoordinateSpace::World);
+		// 获得方向
+		const FVector& Direction = Spline->FindDirectionClosestToWorldLocation(Location,ESplineCoordinateSpace::World);
+		// 设置运动
+		ControlledPawn->AddMovementInput(Direction);
+		// 判断是否到达
+		float DistanceToDestination = (CachedDestination - Location).Length();
+		if (DistanceToDestination < AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
+		}
+	}
 }
