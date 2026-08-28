@@ -22,6 +22,7 @@ class AURA_API AAuraPlayerController : public APlayerController
 
 public:
 	AAuraPlayerController();
+
 	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
@@ -50,7 +51,7 @@ protected:
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
 
 	UAuraAbilitySystemComponent* GetASC();
-
+	// Auto Run
 	FVector CachedDestination = FVector::ZeroVector;
 	float	FollowTime = 0.0f;
 	float	ShortPressThreshold = 0.2f;
@@ -61,4 +62,6 @@ protected:
 	float AutoRunAcceptanceRadius = 50.0f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USplineComponent> Spline;
+	void AutoRun();
+	// Auto Run End
 };
