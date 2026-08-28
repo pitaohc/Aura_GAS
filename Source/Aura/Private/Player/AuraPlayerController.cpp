@@ -3,16 +3,19 @@
 #include "Player/AuraPlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
@@ -114,6 +117,12 @@ void AAuraPlayerController::AbilityInputTagPressed(const FGameplayTag InputTag)
 	// 	5.f,
 	// 	FColor::Green,
 	// 	FString::Printf(TEXT("AbilityInputTagPressed: %s"), *InputTag.ToString()));
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+		FollowTime = 0;
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
@@ -136,9 +145,31 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	// 	0.0f,
 	// 	FColor::Green,
 	// 	FString::Printf(TEXT("AbilityInputTagHeld: %s"), *InputTag.ToString()));
-	if (UAuraAbilitySystemComponent* ASC = GetASC())
+
+	const bool bShouldAbilityHeld = bTargeting || !InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB);
+	if (bShouldAbilityHeld)
 	{
-		ASC->AbilityInputTagHeld(InputTag);
+		// 调用ASC
+		if (UAuraAbilitySystemComponent* ASC = GetASC())
+		{
+			ASC->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		// 移动
+		FollowTime += GetWorld()->GetDeltaSeconds();
+		FHitResult CursorResult;
+		if (GetHitResultUnderCursor(ECC_Visibility, false, CursorResult))
+		{
+			CachedDestination = CursorResult.ImpactPoint;
+		}
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector MoveDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(MoveDirection);
+		}
 	}
 }
 
