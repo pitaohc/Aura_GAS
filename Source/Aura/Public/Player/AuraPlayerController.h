@@ -29,6 +29,7 @@ protected:
 	virtual void BeginPlay() override; // 不允许外部调用，但允许继承
 	void		 Move(const FInputActionValue& InputActionValue);
 	void		 CursorTrace();
+	FHitResult	 CursorResult;
 
 	UPROPERTY(EditAnywhere, category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
@@ -62,6 +63,6 @@ protected:
 	float AutoRunAcceptanceRadius = 50.0f;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USplineComponent> Spline;
-	void AutoRun();
+	void							   AutoRun();
 	// Auto Run End
 };

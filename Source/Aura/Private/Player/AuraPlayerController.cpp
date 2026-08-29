@@ -83,7 +83,7 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 void AAuraPlayerController::CursorTrace()
 {
 	// 进行射线检测，获取鼠标位置下的Actor
-	FHitResult CursorResult;
+
 	// TODO GetHitResultUnderCursor, GetHitResultUnderCursorByChannel, GetHitResultUnderCursorForObjects 对比
 	// 三个参数：碰撞通道，是否复杂碰撞，结果
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorResult);
@@ -99,18 +99,16 @@ void AAuraPlayerController::CursorTrace()
 	const bool HasLastActor = LastActor.GetInterface() != nullptr;
 	const bool HasThisActor = ThisActor.GetInterface() != nullptr;
 	const bool IsSameActor = ThisActor == LastActor;
-	if (HasLastActor && HasThisActor && !IsSameActor) // 如果上一个和当前都有，并且不相同
+	if (!IsSameActor)
 	{
-		LastActor.GetInterface()->UnHighLightActor();
-		ThisActor.GetInterface()->HighLightActor();
-	}
-	else if (HasLastActor && !HasThisActor) // 如果上一个有，当前没有
-	{
-		LastActor.GetInterface()->UnHighLightActor();
-	}
-	else if (!HasLastActor && HasThisActor) // 如果上一个没有，当前有
-	{
-		ThisActor.GetInterface()->HighLightActor();
+		if (HasLastActor)
+		{
+			LastActor.GetInterface()->UnHighLightActor();
+		}
+		if (HasThisActor)
+		{
+			ThisActor.GetInterface()->HighLightActor();
+		}
 	}
 }
 
@@ -144,7 +142,7 @@ void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 		if (ControlledPawn && FollowTime <= ShortPressThreshold)
 		{
 			if (UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-				this, ControlledPawn->GetActorLocation(), CachedDestination))
+					this, ControlledPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
 
@@ -183,8 +181,8 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	{
 		// 移动
 		FollowTime += GetWorld()->GetDeltaSeconds();
-		FHitResult CursorResult;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, CursorResult))
+
+		if (CursorResult.bBlockingHit)
 		{
 			CachedDestination = CursorResult.ImpactPoint;
 		}
@@ -211,14 +209,15 @@ void AAuraPlayerController::AutoRun()
 {
 	if (!bAutoRunning)
 	{
-		return ;
+		return;
 	}
 	if (APawn* ControlledPawn = GetPawn())
 	{
 		// 获得位置
-		const FVector& Location = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(),ESplineCoordinateSpace::World);
+		const FVector& Location = Spline->FindLocationClosestToWorldLocation(
+			ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
 		// 获得方向
-		const FVector& Direction = Spline->FindDirectionClosestToWorldLocation(Location,ESplineCoordinateSpace::World);
+		const FVector& Direction = Spline->FindDirectionClosestToWorldLocation(Location, ESplineCoordinateSpace::World);
 		// 设置运动
 		ControlledPawn->AddMovementInput(Direction);
 		// 判断是否到达
