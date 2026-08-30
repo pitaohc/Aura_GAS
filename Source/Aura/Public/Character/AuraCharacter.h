@@ -38,6 +38,9 @@ protected:
 	
 public:
 	/** Combat Interface */
-	virtual int32 GetPlayerLevel() const override;
+	virtual int32   GetPlayerLevel() const override;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName CombatSocketName;
+	virtual FVector GetCombatSocketLocation() const override;
 	/** Combat Interface End */
 };
