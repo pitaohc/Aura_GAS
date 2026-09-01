@@ -3,12 +3,36 @@
 
 #include "AbilitySystem/Ability/AuraProjectileSpell.h"
 
+#include "Actor/AuraProjectile.h"
+#include "Interaction/CombatInterface.h"
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+	const FGameplayAbilityActorInfo*                                        ActorInfo,
+	const FGameplayAbilityActivationInfo                                    ActivationInfo,
+	const FGameplayEventData*                                               TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
-	GEngine->AddOnScreenDebugMessage(-1,5,FColor::White,TEXT("UAuraProjectileSpell::ActivateAbility C++"));
+	bool bIsServer = HasAuthority(&ActivationInfo);
+	if (!bIsServer)
+	{
+		return;
+	}
+
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	{
+		check(ProjectileClass);
+
+		FTransform Transform;
+		Transform.SetLocation(CombatInterface->GetCombatSocketLocation());
+		//TODO: Set the Projectile Rotation
+		AAuraProjectile* NewProjectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
+			Transform,
+			GetAvatarActorFromActorInfo(),
+			Cast<APawn>(GetAvatarActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		//TODO: Give the Projectile a Gameplay Effect Spec for causing Damage.
+
+		NewProjectile->FinishSpawning(Transform);
+	}
 }

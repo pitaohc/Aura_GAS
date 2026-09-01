@@ -86,3 +86,14 @@ int32 AAuraCharacter::GetPlayerLevel() const
 	check(IsValid(AuraPlayerState));
 	return AuraPlayerState->GetPlayerLevel();
 }
+
+FVector AAuraCharacter::GetCombatSocketLocation() const
+{
+	if (!weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetCombatSocketLocation no weapon"))
+		return FVector::ZeroVector;
+	}
+
+	return weapon->GetSocketLocation(CombatSocketName);
+}
