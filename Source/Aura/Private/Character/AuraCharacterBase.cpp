@@ -23,7 +23,9 @@ AAuraCharacterBase::AAuraCharacterBase()
 	weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
@@ -49,9 +51,18 @@ void AAuraCharacterBase::InitAbilityActorInfo() {}
 
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
-	InitializeAttributes(DefaultPrimaryAttributeEffect, 1.0f);
-	InitializeAttributes(DefaultSecondaryAttributeEffect, 1.0f);
-	InitializeAttributes(DefaultVitalAttributeEffect, 1.0f);
+	if (DefaultPrimaryAttributeEffect)
+	{
+		InitializeAttributes(DefaultPrimaryAttributeEffect, 1.0f);
+	}
+	if (DefaultSecondaryAttributeEffect)
+	{
+		InitializeAttributes(DefaultSecondaryAttributeEffect, 1.0f);
+	}
+	if (DefaultVitalAttributeEffect)
+	{
+		InitializeAttributes(DefaultVitalAttributeEffect, 1.0f);
+	}
 }
 
 void AAuraCharacterBase::InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const

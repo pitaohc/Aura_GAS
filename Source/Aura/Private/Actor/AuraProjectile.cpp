@@ -2,6 +2,8 @@
 
 #include "Actor/AuraProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
@@ -120,6 +122,18 @@ void AAuraProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (HasAuthority())
 	{
+		if (UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			if (SpecHandle.IsValid())
+			{
+				ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+				UE_LOG(LogTemp, Log, TEXT("Apply Projectile SpecHandle: %s"), *SpecHandle.Data->Def->GetName());
+				GEngine->AddOnScreenDebugMessage(-1,
+					5.f,
+					FColor::Green,
+					FString::Printf(TEXT("Apply Projectile SpecHandle: %s"), *SpecHandle.Data->Def->GetName()));
+			}
+		}
 		Destroy();
 	}
 }
