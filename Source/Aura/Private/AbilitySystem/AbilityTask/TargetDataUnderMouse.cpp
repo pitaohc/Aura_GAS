@@ -20,13 +20,21 @@ void UTargetDataUnderMouse::Activate()
 	{
 		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
 		const FPredictionKey			 ActivationKey = GetActivationPredictionKey();
+		UAbilitySystemComponent*		 ASC = AbilitySystemComponent.Get();
+		if (!ASC)
+		{
+			UE_LOG(LogTemp,
+				Warning,
+				TEXT("[%s] AbilitySystemComponent is null, mouse cursor target data not processed."),
+				*GetNameSafe(this));
+			return;
+		}
+
 		// 绑定回调函数，当服务器收到客户端发送的目标数据时，会触发这个回调函数
-		AbilitySystemComponent.Get()
-			->AbilityTargetDataSetDelegate(SpecHandle, ActivationKey)
+		ASC->AbilityTargetDataSetDelegate(SpecHandle, ActivationKey)
 			.AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
 		// 检查是否已经有目标数据被设置，如果有，则立即调用回调函数
-		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(
-			SpecHandle, ActivationKey);
+		const bool bCalledDelegate = ASC->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationKey);
 		if (!bCalledDelegate)
 		{
 			// 如果没有目标数据被设置，则将任务标记为等待远程玩家数据
