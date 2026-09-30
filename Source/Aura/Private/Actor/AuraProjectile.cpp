@@ -2,8 +2,11 @@
 
 #include "Actor/AuraProjectile.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void AAuraProjectile::InitMovement()
 {
@@ -44,6 +47,51 @@ void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnOverlap);
+	SetLifeSpan(LiveSpan);
+
+	ValidateAssets();
+
+	if (LoopSoundCue)
+	{
+		LoopSound = UGameplayStatics::SpawnSoundAttached(LoopSoundCue, GetRootComponent());
+	}
+}
+
+void AAuraProjectile::ValidateAssets() const
+{
+	if (!LoopSoundCue)
+	{
+		UE_LOG(LogTemp,
+			Warning,
+			TEXT("%s (%s): LoopSoundCue is not set, projectile will have no looping sound."),
+			*GetName(),
+			*GetClass()->GetName());
+	}
+	if (!ImpactSoundCue)
+	{
+		UE_LOG(LogTemp,
+			Warning,
+			TEXT("%s (%s): ImpactSoundCue is not set, impact will have no sound."),
+			*GetName(),
+			*GetClass()->GetName());
+	}
+	if (!ImpactEffect)
+	{
+		UE_LOG(LogTemp,
+			Warning,
+			TEXT("%s (%s): ImpactEffect is not set, impact will have no Niagara effect."),
+			*GetName(),
+			*GetClass()->GetName());
+	}
+}
+
+void AAuraProjectile::Destroyed()
+{
+	if (!bHit && !HasAuthority())
+	{
+		PlayImpactEffects();
+	}
+	Super::Destroyed();
 }
 
 void AAuraProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -53,6 +101,32 @@ void AAuraProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 	bool											 bFromSweep,
 	const FHitResult&								 SweepResult)
 {
-	// TODO
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("AAuraProjectile::OnOverlap"));
+
+	PlayImpactEffects();
+	if (HasAuthority())
+	{
+		Destroy();
+	}
+	else
+	{
+		bHit = true;
+	}
+}
+
+void AAuraProjectile::PlayImpactEffects() const
+{
+	if (ImpactSoundCue)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSoundCue, GetActorLocation());
+	}
+
+	if (ImpactEffect)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	}
+
+	if (LoopSound)
+	{
+		LoopSound->Stop();
+	}
 }
