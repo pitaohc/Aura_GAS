@@ -34,8 +34,6 @@ protected:
 	bool bHit = false;
 
 	void PlayImpactEffects() const;
-
-	/** 检查美术/音效资源是否配置，缺失时输出 Warning（仅 BeginPlay 调用一次，避免刷屏） */
 	void ValidateAssets() const;
 
 public:
@@ -46,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAudioComponent> LoopSound;
 	UPROPERTY(EditDefaultsOnly)
-	float LiveSpan = 30.0f;
+	float LifeSpan = 30.0f;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopSoundCue;

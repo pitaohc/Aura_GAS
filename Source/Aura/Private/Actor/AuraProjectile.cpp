@@ -47,7 +47,11 @@ void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnOverlap);
-	SetLifeSpan(LiveSpan);
+
+	if (HasAuthority())
+	{
+		SetLifeSpan(LifeSpan);
+	}
 
 	ValidateAssets();
 
@@ -91,6 +95,8 @@ void AAuraProjectile::Destroyed()
 	{
 		PlayImpactEffects();
 	}
+	if (LoopSound)
+		LoopSound->Stop();
 	Super::Destroyed();
 }
 
@@ -101,15 +107,18 @@ void AAuraProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 	bool											 bFromSweep,
 	const FHitResult&								 SweepResult)
 {
-
+	if (!OtherActor || OtherActor == this || OtherActor == GetOwner())
+		return;
+	if (bHit)
+	{
+		return;
+	}
+	bHit = true;
 	PlayImpactEffects();
+
 	if (HasAuthority())
 	{
 		Destroy();
-	}
-	else
-	{
-		bHit = true;
 	}
 }
 
