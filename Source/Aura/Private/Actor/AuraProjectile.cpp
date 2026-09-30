@@ -8,8 +8,8 @@
 void AAuraProjectile::InitMovement()
 {
 	// Set Movement
-	ProjectileMovement->InitialSpeed = 100;
-	ProjectileMovement->MaxSpeed = 100;
+	// ProjectileMovement->InitialSpeed = 100;
+	// ProjectileMovement->MaxSpeed = 100;
 	ProjectileMovement->ProjectileGravityScale = 0;
 }
 
