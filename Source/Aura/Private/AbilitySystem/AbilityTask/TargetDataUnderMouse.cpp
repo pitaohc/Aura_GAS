@@ -12,10 +12,9 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 
 void UTargetDataUnderMouse::Activate()
 {
-	const bool bIsLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
-	if (bIsLocallyControlled)
+	if (IsLocallyControlled())
 	{
-		SendCursorTargetData();
+		SendMouseCursorData();
 	}
 	else
 	{
@@ -23,7 +22,7 @@ void UTargetDataUnderMouse::Activate()
 	}
 }
 
-void UTargetDataUnderMouse::SendCursorTargetData() const
+void UTargetDataUnderMouse::SendMouseCursorData() const
 {
 	// 创建一个作用域内的预测窗口，通过RAII的机制，为当前函数提供预测上下文。
 	// 在此作用域内，ASC::ScopedPredictionKey 会获得这个PredictionKey。
@@ -36,14 +35,17 @@ void UTargetDataUnderMouse::SendCursorTargetData() const
 	APlayerController* PC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 	if (!PC)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PC is null"));
+		UE_LOG(LogTemp,
+			Warning,
+			TEXT("[%s] PlayerController is null, mouse cursor target data not sent."),
+			*GetNameSafe(this));
 		return;
 	}
 	// 获取鼠标命中结果
-	FHitResult         HitResult;
+	FHitResult HitResult;
 	PC->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit(HitResult);
-	FGameplayAbilityTargetDataHandle            TargetDataHandle;
+	FGameplayAbilityTargetDataHandle			TargetDataHandle;
 	TargetDataHandle.Add(Data);
 	// 传递TargetData，各个参数的作用：
 	// 1）标识Ability实例；
@@ -55,12 +57,11 @@ void UTargetDataUnderMouse::SendCursorTargetData() const
 		TargetDataHandle,
 		FGameplayTag(),
 		AbilitySystemComponent->ScopedPredictionKey);
-	
+
 	// TODO: 日后可以考虑改为UAbilityTask::IsActive()
 	if (ShouldBroadcastAbilityTaskDelegates()) // 广播的条件Ability存在且被激活
 	{
 		// 广播获得的目标数据，可以用于在C/S绘制Debug位置
 		ValidData.Broadcast(TargetDataHandle);
 	}
-
 }
