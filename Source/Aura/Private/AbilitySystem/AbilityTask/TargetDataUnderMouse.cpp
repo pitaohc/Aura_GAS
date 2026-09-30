@@ -18,7 +18,20 @@ void UTargetDataUnderMouse::Activate()
 	}
 	else
 	{
-		// TODO: We are on the server, so listen for target data.
+		const FGameplayAbilitySpecHandle SpecHandle = GetAbilitySpecHandle();
+		const FPredictionKey			 ActivationKey = GetActivationPredictionKey();
+		// 绑定回调函数，当服务器收到客户端发送的目标数据时，会触发这个回调函数
+		AbilitySystemComponent.Get()
+			->AbilityTargetDataSetDelegate(SpecHandle, ActivationKey)
+			.AddUObject(this, &UTargetDataUnderMouse::OnTargetDataReplicatedCallback);
+		// 检查是否已经有目标数据被设置，如果有，则立即调用回调函数
+		const bool bCalledDelegate = AbilitySystemComponent.Get()->CallReplicatedTargetDataDelegatesIfSet(
+			SpecHandle, ActivationKey);
+		if (!bCalledDelegate)
+		{
+			// 如果没有目标数据被设置，则将任务标记为等待远程玩家数据
+			SetWaitingOnRemotePlayerData();
+		}
 	}
 }
 
@@ -63,5 +76,16 @@ void UTargetDataUnderMouse::SendMouseCursorData() const
 	{
 		// 广播获得的目标数据，可以用于在C/S绘制Debug位置
 		ValidData.Broadcast(TargetDataHandle);
+	}
+}
+
+void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(
+	const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag)
+{
+	// 消费掉缓存的目标数据，避免重复使用，需要知道Ability和Task。
+	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		ValidData.Broadcast(DataHandle);
 	}
 }

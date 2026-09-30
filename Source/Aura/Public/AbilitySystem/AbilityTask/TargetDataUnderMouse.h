@@ -32,4 +32,6 @@ protected:
 	virtual void Activate() override;
 
 	void SendMouseCursorData() const;
+
+	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag);
 };
