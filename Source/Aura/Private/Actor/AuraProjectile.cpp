@@ -3,6 +3,7 @@
 #include "Actor/AuraProjectile.h"
 
 #include "NiagaraFunctionLibrary.h"
+#include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -19,6 +20,7 @@ void AAuraProjectile::InitMovement()
 void AAuraProjectile::InitCollision()
 {
 	// Set Collision
+	Sphere->SetCollisionObjectType(ECC_Projectile);
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
@@ -37,7 +39,7 @@ AAuraProjectile::AAuraProjectile()
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
 	SetRootComponent(Sphere);
-
+	// 此处设置只会影响新建的类型，已存在的类型会根据原有的属性读取，会覆盖此处的设置
 	InitCollision();
 	InitMovement();
 }
