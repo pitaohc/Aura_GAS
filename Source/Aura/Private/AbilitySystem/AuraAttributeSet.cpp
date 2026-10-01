@@ -147,9 +147,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		float min = .0f;
 		float max = GetMaxHealth();
 		SetHealth(FMath::Clamp(GetHealth(), min, max));
-		UE_LOG(LogTemp, Log, TEXT("Health: %f, MaxHealth: %f"), GetHealth(), GetMaxHealth());
-		GEngine->AddOnScreenDebugMessage(
-			-1, 5.f, FColor::Red, FString::Printf(TEXT("Health: %f, MaxHealth: %f"), GetHealth(), GetMaxHealth()));
+		// UE_LOG(LogTemp, Log, TEXT("Health: %f, MaxHealth: %f"), GetHealth(), GetMaxHealth());
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 5.f, FColor::Red, FString::Printf(TEXT("Health: %f, MaxHealth: %f"), GetHealth(), GetMaxHealth()));
 	}
 	if (Attribute == GetManaAttribute())
 	{

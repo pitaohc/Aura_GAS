@@ -128,10 +128,10 @@ void AAuraProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent,
 			{
 				ASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 				UE_LOG(LogTemp, Log, TEXT("Apply Projectile SpecHandle: %s"), *SpecHandle.Data->Def->GetName());
-				GEngine->AddOnScreenDebugMessage(-1,
-					5.f,
-					FColor::Green,
-					FString::Printf(TEXT("Apply Projectile SpecHandle: %s"), *SpecHandle.Data->Def->GetName()));
+				// GEngine->AddOnScreenDebugMessage(-1,
+				// 	5.f,
+				// 	FColor::Green,
+				// 	FString::Printf(TEXT("Apply Projectile SpecHandle: %s"), *SpecHandle.Data->Def->GetName()));
 			}
 		}
 		Destroy();

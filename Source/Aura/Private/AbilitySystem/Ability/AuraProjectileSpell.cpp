@@ -48,10 +48,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			NewProjectile->SpecHandle = ASC->MakeOutgoingSpec(
 				DamageEffectClass, GetAbilityLevel(), ASC->MakeEffectContext());
 			UE_LOG(LogTemp, Log, TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName());
-			GEngine->AddOnScreenDebugMessage(-1,
-				5.f,
-				FColor::Green,
-				FString::Printf(TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName()));
+			// GEngine->AddOnScreenDebugMessage(-1,
+			// 	5.f,
+			// 	FColor::Green,
+			// 	FString::Printf(TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName()));
 		}
 
 		NewProjectile->FinishSpawning(Transform);
