@@ -78,6 +78,10 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
 	}
+	if (bAutoRunning)
+	{
+		CancelAutoRun();
+	}
 }
 
 void AAuraPlayerController::CursorTrace()
@@ -224,7 +228,12 @@ void AAuraPlayerController::AutoRun()
 		float DistanceToDestination = (CachedDestination - Location).Length();
 		if (DistanceToDestination < AutoRunAcceptanceRadius)
 		{
-			bAutoRunning = false;
+			CancelAutoRun();
 		}
 	}
+}
+
+void AAuraPlayerController::CancelAutoRun()
+{
+	bAutoRunning = false;
 }
