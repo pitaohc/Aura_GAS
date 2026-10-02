@@ -45,13 +45,19 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		if (UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
 				GetAvatarActorFromActorInfo()))
 		{
-			NewProjectile->SpecHandle = ASC->MakeOutgoingSpec(
-				DamageEffectClass, GetAbilityLevel(), ASC->MakeEffectContext());
-			UE_LOG(LogTemp, Log, TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName());
-			// GEngine->AddOnScreenDebugMessage(-1,
-			// 	5.f,
-			// 	FColor::Green,
-			// 	FString::Printf(TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName()));
+			if (DamageEffectClass)
+			{
+				auto EffectContext = ASC->MakeEffectContext();
+				EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
+				NewProjectile->SpecHandle = ASC->MakeOutgoingSpec(
+	DamageEffectClass, GetAbilityLevel(), EffectContext);
+				UE_LOG(LogTemp, Log, TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName());
+				// GEngine->AddOnScreenDebugMessage(-1,
+				// 	5.f,
+				// 	FColor::Green,
+				// 	FString::Printf(TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName()));
+
+			}
 		}
 
 		NewProjectile->FinishSpawning(Transform);
