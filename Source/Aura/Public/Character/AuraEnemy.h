@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/Controller/OverlayWidgetController.h" // TODO: Hack Please extract signatures to a common file
 #include "AuraEnemy.generated.h"
 
 UCLASS()
@@ -40,4 +41,13 @@ public:
 	FORCEINLINE virtual int32 GetPlayerLevel() const override;
 
 	/** Combat Interface End*/
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UWidgetComponent> HealthBar;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnAttributeChangedSignature OnMaxHealthChanged;
 };

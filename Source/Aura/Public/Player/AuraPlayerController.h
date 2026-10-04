@@ -64,5 +64,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USplineComponent> Spline;
 	void							   AutoRun();
+	void CancelAutoRun();
 	// Auto Run End
 };
