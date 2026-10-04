@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -52,4 +53,7 @@ public:
 	TObjectPtr<USoundBase> ImpactSoundCue;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class UNiagaraSystem> ImpactEffect;
+
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
+	FGameplayEffectSpecHandle SpecHandle;
 };
