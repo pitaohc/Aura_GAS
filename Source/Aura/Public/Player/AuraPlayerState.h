@@ -30,7 +30,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 	
-	UPROPERTY(VisibleAnywhere,ReplicatedUsing=OnRep_Level)
+	UPROPERTY(EditDefaultsOnly,ReplicatedUsing=OnRep_Level) // 为了Debug数值方便，使等级可编辑
 	int32 Level = 1;
 	
 	UFUNCTION()
