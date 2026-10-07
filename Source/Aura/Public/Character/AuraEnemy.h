@@ -37,21 +37,21 @@ public:
 
 	virtual void UnHighLightActor() override;
 	/** Enemy Interface End*/
-	
+
 	/** Combat Interface */
 	FORCEINLINE virtual int32 GetPlayerLevel() const override;
 
 	/** Combat Interface End*/
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UWidgetComponent> HealthBar;
-	
+
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxHealthChanged;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ECharacterClass CharacterClass = ECharacterClass::Invalid;
 

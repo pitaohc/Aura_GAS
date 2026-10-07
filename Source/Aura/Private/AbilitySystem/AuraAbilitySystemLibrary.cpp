@@ -28,7 +28,7 @@ UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(
 		return nullptr;
 
 	const FWidgetControllerParams Params = { PC, PS, ASC, AS };
-	UOverlayWidgetController*     OverlayController = AuraHUD->GetOverlayWidgetController(Params);
+	UOverlayWidgetController*	  OverlayController = AuraHUD->GetOverlayWidgetController(Params);
 	return OverlayController;
 }
 
@@ -51,15 +51,15 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 	if (!AS)
 		return nullptr;
 
-	const FWidgetControllerParams   Params = { PC, PS, ASC, AS };
+	const FWidgetControllerParams	Params = { PC, PS, ASC, AS };
 	UAttributeMenuWidgetController* AttributeMenuWidgetController = AuraHUD->GetAttributeMenuWidgetController(Params);
 	return AttributeMenuWidgetController;
 }
 
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject,
-	const ECharacterClass                                                  CharacterClass,
-	const float                                                            Level,
-	UAbilitySystemComponent*                                               ASC)
+	const ECharacterClass												   CharacterClass,
+	const float															   Level,
+	UAbilitySystemComponent*											   ASC)
 {
 	if (CharacterClass == ECharacterClass::Invalid)
 	{
@@ -83,30 +83,27 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	// 	: TEXT("Unknown");
 	//
 	// UE_LOG(LogTemp, Warning, TEXT("InitializeDefaultAttributes class %s level %f"), *ClassNameString, Level);
-	
+
 	AActor* AvatorActor = ASC->GetAvatarActor();
 
-	UCharacterClassInfo*       CharacterClassInfo = GameMode->CharacterClassInfo;
+	UCharacterClassInfo*	   CharacterClassInfo = GameMode->CharacterClassInfo;
 	FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 
 	auto PrimaryAttributesContextHandle = ASC->MakeEffectContext();
 	PrimaryAttributesContextHandle.AddSourceObject(AvatorActor);
-	const auto PrimaryAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassDefaultInfo.PrimaryAttributes,
-		Level,
-		PrimaryAttributesContextHandle);
+	const auto PrimaryAttributesSpecHandle = ASC->MakeOutgoingSpec(
+		CharacterClassDefaultInfo.PrimaryAttributes, Level, PrimaryAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToTarget(*PrimaryAttributesSpecHandle.Data.Get(), ASC);
 
 	auto SecondaryAttributesContextHandle = ASC->MakeEffectContext();
 	SecondaryAttributesContextHandle.AddSourceObject(AvatorActor);
-	const auto SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->SecondaryAttributes,
-		Level,
-		SecondaryAttributesContextHandle);
+	const auto SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(
+		CharacterClassInfo->SecondaryAttributes, Level, SecondaryAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToTarget(*SecondaryAttributesSpecHandle.Data.Get(), ASC);
 
 	auto VitalAttributesContextHandle = ASC->MakeEffectContext();
 	VitalAttributesContextHandle.AddSourceObject(AvatorActor);
-	const auto VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes,
-		Level,
-		VitalAttributesContextHandle);
+	const auto VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(
+		CharacterClassInfo->VitalAttributes, Level, VitalAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToTarget(*VitalAttributesSpecHandle.Data.Get(), ASC);
 }
