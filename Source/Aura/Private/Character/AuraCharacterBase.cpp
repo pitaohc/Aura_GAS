@@ -53,15 +53,15 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	if (DefaultPrimaryAttributeEffect)
 	{
-		InitializeAttributes(DefaultPrimaryAttributeEffect, 1.0f);
+		InitializeAttributes(DefaultPrimaryAttributeEffect, GetPlayerLevel());
 	}
 	if (DefaultSecondaryAttributeEffect)
 	{
-		InitializeAttributes(DefaultSecondaryAttributeEffect, 1.0f);
+		InitializeAttributes(DefaultSecondaryAttributeEffect, GetPlayerLevel());
 	}
 	if (DefaultVitalAttributeEffect)
 	{
-		InitializeAttributes(DefaultVitalAttributeEffect, 1.0f);
+		InitializeAttributes(DefaultVitalAttributeEffect, GetPlayerLevel());
 	}
 }
 
