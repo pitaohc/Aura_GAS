@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AuraCharacterBase.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/Controller/OverlayWidgetController.h" // TODO: Hack Please extract signatures to a common file
 #include "AuraEnemy.generated.h"
@@ -50,4 +51,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ECharacterClass CharacterClass = ECharacterClass::Invalid;
+
+	virtual void InitializeDefaultAttributes() const override;
 };
