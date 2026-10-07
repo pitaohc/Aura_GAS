@@ -3,6 +3,7 @@
 #include "Character/AuraEnemy.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
 #include "Components/WidgetComponent.h"
@@ -93,4 +94,9 @@ void AAuraEnemy::UnHighLightActor()
 int32 AAuraEnemy::GetPlayerLevel() const
 {
 	return Level;
+}
+
+void AAuraEnemy::InitializeDefaultAttributes() const
+{
+	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,GetPlayerLevel(),GetAbilitySystemComponent());
 }
