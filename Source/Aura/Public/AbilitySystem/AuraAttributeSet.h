@@ -179,6 +179,12 @@ public:
 	void OnRep_MaxMana(const FGameplayAttributeData& OldValue) const;
 
 	/* Secondary Attributes End*/
+	
+	/* Meta Attributes */
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
+	/* Meta Attributes End*/
 private:
 	void CreateEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };

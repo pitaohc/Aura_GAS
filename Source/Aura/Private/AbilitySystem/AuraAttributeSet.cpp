@@ -157,6 +157,24 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		float max = GetMaxMana();
 		SetMana(FMath::Clamp(GetMana(), min, max));
 	}
+	if (Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.0f);
+		if (LocalIncomingDamage > 0.0f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			const bool bFatal = NewHealth <= 0.0f;
+			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
+			if (bFatal)
+			{
+				auto* asc =  GetOwningAbilitySystemComponent();
+				auto* actor = asc->GetAvatarActor();
+				
+				UE_LOG(LogTemp, Error, TEXT("Incoming damage is false %s"),*actor->GetName());
+			}
+		}
+	}
 }
 
 void UAuraAttributeSet::CreateEffectProperties(
