@@ -1,6 +1,6 @@
 # Aura（UE 5.1 → 5.3）升级与 MSVC 工具链问题记录
 
-> 本文记录 2026-10-07 的升级过程、踩到的坑与解法。
+> 本文记录 2026-10-07 起的升级过程、踩到的坑与解法。最近一次更新：2026-10-08。
 > **凡未实际执行过验证的结论，均已标注为"推断"或"待验证"**，请勿当成既成事实使用。
 >
 > - 文档中的"实测"= 本机读取引擎源码/配置文件、查询 vswhere、运行 UBT 所得
@@ -26,34 +26,33 @@
 
 | 项目 | 值 |
 | --- | --- |
-| 工程路径 | `D:\Fast Data\project\UE\Aura_GAS` |
-| 目标引擎 | `D:\APP\Unreal Engine\UE_5.3`，版本 **5.3.2**（Changelist 29314046，Branch `++UE5+Release-5.3`），Launcher 安装版 |
-| 本机其它引擎 | UE_4.27、UE_5.1、UE_5.3、UE_5.4、UE_5.8（5.1 / 5.3 / 5.8 随附源码；4.27 / 5.4 为纯安装版） |
-| 工程模块 | 单模块 `Aura`，58 个源文件，无自定义 `Plugins` 目录 |
+| 工程路径 | `D:\project\Aura_GAS` |
+| 目标引擎 | `D:\app\Epic Games\UnrealEngine\UE_5.3`，版本 **5.3.2**（Changelist 29314046，Branch `++UE5+Release-5.3`），Launcher 安装版 |
+| 工程模块 | 单模块 `Aura`，无自定义 `Plugins` 目录 |
 | UBT 使用的 DotNet SDK | 6.0.302（引擎自带） |
 
 ### 2.2 Visual Studio
 
 | 项目 | 值 |
 | --- | --- |
-| 唯一 VS 实例 | `C:\Program Files\Microsoft Visual Studio\2022\Community` |
-| 版本 / 通道 | **17.14.36401.2**，`VisualStudio.17.Release`，`isComplete: true` |
-| 已安装 Windows SDK | 10.0.19041.0 / 10.0.22621.0 / **10.0.26100.0（当前选用）** |
+| VS 实例 | `C:\Program Files\Microsoft Visual Studio\2022\Professional` |
+| 版本 / 通道 | **17.12.35527.113**，`VisualStudio.17.Release`，`isComplete: true` |
+| 已安装 Windows SDK | 10.0.22621.0 |
+| 安装来源 | 公司内网离线布局 `\\10.10.200.68\share file\tech\vs2022` |
 
 ### 2.3 MSVC 工具集（`VC\Tools\MSVC`）
 
-| 目录（家族） | cl.exe 实际版本 | x64 | arm64 | 状态 |
-| --- | --- | --- | --- | --- |
-| `14.29.30133` | —（无 cl.exe） | ❌ | — | 卸载 v142 后残留的**空目录**，无害 |
-| `14.33.31629` | 14.33.31631 | ✅ | — | 被引擎 **ban**（5.3 的 `BannedVisualCppVersions` 覆盖 14.30–14.33） |
-| `14.38.33130` | 14.38.33145 | ✅ | — | ✅ 可用，与引擎预编译库对应的档位 |
-| `14.44.35207` | 14.44.35214 | ✅ | ✅ | ✅ 可用，但**对 UE 5.3 过新**，即本次问题的根源 |
+| 目录（家族） | cl.exe 实际版本 | x64 | 状态 |
+| --- | --- | --- | --- |
+| `14.29.30133` | 14.29.30157 | ✅ | v142（VS2019 工具链），随 VS Professional 一起安装，**是本次问题的根源** |
+| `14.34.31933` | 14.34.31948 | ✅ | ✅ **已补装**，UE 5.3 偏好表 rank 2，**当前实际选用版本** |
+| `14.38.33130` | 14.38.33143 | ✅ | ✅ 可用，但 rank 4（不在偏好表），单独存在时会被选中 |
+| `14.42.34433` | 14.42.34435 | ✅ | ✅ 可用，rank 4，VS 17.12 随附的最新工具链 |
 
 VS 的默认工具集指向文件：
 
 ```
-VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt      → 14.44.35207
-VC\Auxiliary\Build\Microsoft.VCToolsVersion.V143.default.txt → 14.38.33130
+VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt → 14.42.34433
 ```
 
 ### 2.4 引擎的编译器策略（源码实测位置）
@@ -74,20 +73,41 @@ VC\Auxiliary\Build\Microsoft.VCToolsVersion.V143.default.txt → 14.38.33130
 
 ```
 Microsoft platform targets must be compiled with Visual Studio 2022 17.4 (MSVC 14.34.x) or later
-for the installed engine. ... The current compiler version was detected as: 14.29.30159
+for the installed engine. ... The current compiler version was detected as: 14.29.30157
 ```
 
-### 根因
+### 根因（源码实测，完整机制）
 
-`C:\...\VS2022\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64\cl.exe` 的 `ProductVersion` 实测为
-**14.29.30159.0**，与报错数字完全一致 —— 即 VS2019 时代的 v142 工具链被安装在 VS2022 目录树内，
-UBT 扫描时把它当作候选并选中。报错信息里"ensure no configuration is forcing
-WindowsTargetRules.Compiler to VisualStudio2019"是误导：所有 `BuildConfiguration.xml` 中均无此配置。
+`C:\...\VS2022\Professional\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64\cl.exe` 的 `ProductVersion` 实测为
+**14.29.30157.0**，与报错数字完全一致 —— 即 v142（VS2019）工具链以可选组件形式安装在 VS2022 目录树内。
+
+问题的深层原因是 UE 5.3 偏好表（`MicrosoftPlatformSDK.Versions.cs:48-54`）的选择逻辑：
+
+```
+PreferredVisualCppVersions = [
+  14.36.x → FamilyRank 0   (VS2022 17.6，最优先)
+  14.35.x → FamilyRank 1
+  14.34.x → FamilyRank 2
+  14.29.x → FamilyRank 3   (VS2019 16.11，v142)
+  其他所有版本 → FamilyRank 4  ← 14.38、14.42 均在此
+]
+```
+
+`FamilyRank` 的计算方式为 `PreferredVisualCppVersions.TakeWhile(!Contains).Count()`：14.29 匹配第 4 条，前面跳过 3 条，得 rank 3；而 14.38/14.42 比偏好表里最新的 14.36 还新，一条都不匹配，得 rank 4。
+
+`SelectToolChain` 的排序是 `.ThenBy(FamilyRank)` **升序**，rank 3 < rank 4，所以 **14.29 排在 14.38/14.42 前面被选中**。
+
+这是引擎内部的自相矛盾：偏好表把 14.29 列为"已测试可用"（rank 3），但 `UEBuildWindows.cs:1045` 的安装版引擎检查要求 `ToolChainVersion ≥ 14.34`，二者冲突时抛出异常。报错信息里 "ensure no configuration is forcing WindowsTargetRules.Compiler to VisualStudio2019" 是误导：`Compiler` 枚举实际上是 `VisualStudio2022`，问题出在版本号 14.29 < 14.34，而非枚举值。
+
+**根治方案：安装一个偏好表内 rank 低于 14.29（即 rank 0/1/2）的工具链。**
+
+只要装了 14.34.x、14.35.x 或 14.36.x 中任意一个，其 FamilyRank 就低于 14.29 的 rank 3，自然排到前面，14.29 不再被选中，且版本号满足 ≥14.34 的要求。
 
 ### 处理
 
-1. 用 VS Installer **卸载 MSVC v142（14.29）** —— 已执行，成功（留下空目录）。
-2. 附带效果：UBT 转而选中 **14.44.35214**，从而暴露出下一个问题。
+1. VS Installer → 单个组件，补装 **MSVC v143 - VS 2022 C++ x64/x86 生成工具 (v14.34-17.4)**。
+2. 安装后 `VC\Tools\MSVC\14.34.31933` 出现，FamilyRank=2，成为优先级最高的候选。
+3. 保留 v142（14.29）不动，其他工程继续可用。
 
 ---
 
@@ -179,11 +199,49 @@ UnrealEditor Win64 Development
 
 ---
 
-## 六、配置尝试与结果（重要教训）
+## 六、配置文件机制与尝试记录（重要教训）
 
-### 6.1 `CompilerVersion` / `ToolchainVersion` 的三种来源
+### 6.1 两个配置文件的作用与区别
 
-`UEBuildWindows.cs:270-283` 实测：
+UBT 用两套完全独立的配置系统，不同模式下读取的内容不同，是本次踩坑的核心原因。
+
+#### `BuildConfiguration.xml`（XmlConfig 系统）
+
+UBT 专属的 XML 配置文件，通过 `[XmlConfigFile]` 属性读取。**不同模式读取范围不同**：
+
+| UBT 模式 | 读取哪些文件 |
+| --- | --- |
+| Build（`-FromMSBuild` 编译） | 只读 Documents + AppData 的**全局**文件，**不读工程级** |
+| `-projectfiles`（生成 sln） | 读全局文件 + `<工程>/Saved/UnrealBuildTool/BuildConfiguration.xml` |
+
+读取优先级（后者覆盖前者，源自 `XmlConfig.cs:113-331`）：
+
+| 优先级 | 位置 | 说明 |
+| --- | --- | --- |
+| 1（最低） | `<引擎>\Saved\UnrealBuildTool\BuildConfiguration.xml` | Launcher 安装版**跳过**此层 |
+| 2 | `%USERPROFILE%\Documents\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml` | 全局 |
+| 3 | `%APPDATA%\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml` | 全局 |
+| 4（最高） | `<工程>\Saved\UnrealBuildTool\BuildConfiguration.xml` | 仅 `-projectfiles` 模式读取 |
+
+典型内容示例：
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration xmlns="https://www.unrealengine.com/BuildConfiguration">
+  <WindowsPlatform>
+    <Compiler>VisualStudio2022</Compiler>
+    <CompilerVersion>14.34.31933</CompilerVersion>
+  </WindowsPlatform>
+</Configuration>
+```
+
+**注意**：工程级 `Saved\UnrealBuildTool\BuildConfiguration.xml` 对编译本身无效，只影响生成 sln。若其中写了一个不存在的版本号（如 14.38.33130），会导致生成 sln 时报 "Unable to find valid ... C++ toolchain" 错误。
+
+#### `Config/DefaultEngine.ini`（ConfigHierarchy 系统）
+
+项目级引擎配置，通过 `[ConfigFile(ConfigHierarchyType.Engine, ...)]` 属性读取，在 **Build 模式和 `-projectfiles` 模式下均有效**。通过 `ConfigCache.ReadSettings` 在 `TargetRules` 构造函数里读取，早于 `ValidateTarget` 执行。
+
+`CompilerVersion` 的三种来源（`UEBuildWindows.cs:270-283`，后者覆盖前者）：
 
 ```csharp
 [ConfigFile(ConfigHierarchyType.Engine, "/Script/WindowsTargetPlatform.WindowsTargetSettings", "CompilerVersion")]
@@ -192,55 +250,41 @@ UnrealEditor Win64 Development
 public string? CompilerVersion = null;
 ```
 
-- `ToolchainVersion` 注释明确写着"**if the compiler is not msvc**"，
-  且 `VCEnvironment.cs:477-482` 中非 Clang 分支会 `ToolChain = Compiler;`
-  —— 用 MSVC 时它**被忽略**，不必设置。
-
-### 6.2 一次失败的尝试（已记录，避免重犯）
-
-曾在工程级 `Saved\UnrealBuildTool\BuildConfiguration.xml` 写入：
-
-```xml
-<WindowsPlatform>
-  <Compiler>VisualStudio2022</Compiler>
-  <CompilerVersion>14.38.33130</CompilerVersion>
-  <ToolchainVersion>14.38.33130</ToolchainVersion>
-</WindowsPlatform>
-```
-
-**结果：无效**。后续构建日志仍为：
-
-```
-Using Visual Studio 2022 14.44.35214 toolchain (C:\...\VC\Tools\MSVC\14.44.35207)
-```
-
-原因：UBT 的 XML 配置只在**生成工程文件 / 查询**等模式下读取
-（`XmlConfig.ReadConfigFiles` 由这些模式调用，且项目级那份要求传入 `ProjectRootDirectory`）；
-而编译走的是 Build 模式（`AuraEditor Win64 Development -Project=... -FromMSBuild`），**不读 XML**。
-
-### 6.3 正确的位置
-
-要固定编译器版本应写进工程 ini 的**已存在节**：
+写法要求：值用**目录名**，不用 cl.exe 实际版本（`MicrosoftPlatformSDK.cs:551` 按目录族匹配）：
 
 ```ini
-; Config/DefaultEngine.ini
 [/Script/WindowsTargetPlatform.WindowsTargetSettings]
-CompilerVersion=14.38.33130
+CompilerVersion=14.34.31933
 ```
 
-- 值写**目录名**：UBT 按"目录版本或同族版本"匹配（`MicrosoftPlatformSDK.cs:551`），
-  写 cl.exe 真实版本 `14.38.33145` 可能不匹配；
-- `ToolchainVersion` 无需写（见 6.1）；
-- **未验证**：本节内容尚未在本机实测生效（截至文档编写时未再构建）。
+- `ToolchainVersion` 注释明确写着"if the compiler is not msvc"，用 MSVC 时**被忽略**，不必设置。
 
-### 6.4 配置层次（实测 `XmlConfig.cs:113-331`，后者覆盖前者）
+**本次实测结论**：在本机上（VS Professional 17.12.3），向 `DefaultEngine.ini` 写入 `CompilerVersion=14.38.33130` 后，Build 模式仍然选中了 14.29，说明 ini 方式在当前环境下同样无法可靠地覆盖工具链选择。**根治方案是直接安装偏好表内排名更高的工具链**，不依赖任何配置文件。
 
-| 优先级 | 位置 | 说明 |
-| --- | --- | --- |
-| 1 | `<工程>\Saved\UnrealBuildTool\BuildConfiguration.xml` | 仅本工程 |
-| 2 | `%APPDATA%\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml` | 全局 |
-| 3 | `%USERPROFILE%\Documents\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml` | 全局 |
-| 4 | `<引擎>\Saved\UnrealBuildTool\BuildConfiguration.xml` | Launcher 安装版**跳过**此层 |
+### 6.2 失败尝试记录（避免重犯）
+
+**尝试一**：向工程级 `Saved\UnrealBuildTool\BuildConfiguration.xml` 写入 `CompilerVersion=14.38.33130`。  
+**结果**：编译模式无效（该文件不被 Build 模式读取）；生成 sln 时反而报错，因为 14.38 未安装。
+
+**尝试二**：向 `Config/DefaultEngine.ini` 的 `[/Script/WindowsTargetPlatform.WindowsTargetSettings]` 节写入 `CompilerVersion=14.38.33130`。  
+**结果**：无效。Build 模式仍选中 14.29，说明 ini 路径在当前环境存在某种覆盖或失效场景，未能生效。
+
+**教训**：试图通过配置文件"绕过"工具链排名是脆弱的。正确做法是让偏好表里 rank 更低的版本（14.34/35/36）存在于系统中，UBT 自然会选它，无需任何配置。
+
+### 6.3 最终解法（已验证）
+
+在 VS Installer → 单个组件里补装 **MSVC v143 - VS 2022 C++ x64/x86 生成工具 (v14.34-17.4)**。
+
+安装后效果（UBT 日志实测）：
+
+```
+Available x64 toolchains (3):
+ * ...\14.34.31933  (FamilyRank=2)   ← 自动选中，版本检查通过
+ * ...\14.29.30133  (FamilyRank=3)   ← v142 保留，其他工程可用
+ * ...\14.42.34433  (FamilyRank=4)
+```
+
+v142（14.29）保留不动，其他依赖它的工程不受影响。`Saved\UnrealBuildTool\BuildConfiguration.xml` 和 `DefaultEngine.ini` 均保持空/默认即可。
 
 ---
 
@@ -306,15 +350,16 @@ CompilerVersion=14.38.33130
 | # | 内容 | 状态 |
 | --- | --- | --- |
 | 1 | `Aura.uproject` → `"EngineAssociation": "5.3"` | ✅ 已改 |
-| 2 | 卸载 MSVC v142（14.29） | ✅ 已执行 |
-| 3 | 引擎 `ConcurrentLinearAllocator.h:31` 加 `defined(__has_feature)` 守卫 | ✅ 已落盘 |
-| 4 | 工程级 `BuildConfiguration.xml` 写入 `CompilerVersion` | ⚠️ 已写但**证明无效**（见 6.2），建议清空 |
+| 2 | 补装 MSVC v143 14.34.x（VS Installer 单个组件） | ✅ 已执行，FamilyRank=2，成为最优先候选 |
+| 3 | 引擎 `ConcurrentLinearAllocator.h:31` 加 `defined(__has_feature)` 守卫 | ✅ 已落盘（待编译验证） |
+| 4 | 清空工程级 `Saved\UnrealBuildTool\BuildConfiguration.xml` | ✅ 已清空（原写入的 14.38.33130 导致生成 sln 报错） |
+| 5 | 删除 `Config/DefaultEngine.ini` 中的 `CompilerVersion=14.38.33130` | ✅ 已删除 |
 
 ### 8.2 尚未完成 / 待验证
 
-- [ ] **重新编译 Aura 工程**，确认 `ConcurrentLinearAllocator.h(31)` 报错消失；
+- [ ] **重新编译 Aura 工程**，确认 14.34 工具链被正确选用，且 `ConcurrentLinearAllocator.h(31)` 不再报错；
+- [ ] **重新生成 sln**，确认不再出现 "Unable to find valid ... toolchain" 错误；
 - [ ] **重启 Rider**，确认 UnrealLink 宿主工程构建通过；
-- [ ] 任选其一收口工具链：① 保留补丁用 14.44；② 卸载 14.44 只用 14.38；
 - [ ] 目标文件 `AuraEditor.Target.cs` / `Aura.Target.cs` 仍为 `BuildSettingsVersion.V2`，
       升级稳定后再决定是否升 V4（会引入 C++20 + 严格模式，需改代码）；
 - [ ] 以下 3 处工程代码问题（5.3 起的废弃 API 与逻辑缺陷）**尚未修改**：
@@ -327,12 +372,8 @@ CompilerVersion=14.38.33130
 
 ### 8.3 其它注意事项
 
-- **工具链一致性**：引擎预编译库对应 14.38 档；若自己的模块用 14.44、链接引擎的 14.38 产物，
-  属混用工具链，通常能连过但存在潜在风险。追求一致就用 14.38。
-- **磁盘上有一份完整副本** `D:\Fast Data\project\UE\Aura_GAS - 副本`（"副本"取自中文系统，
-  终端可能显示为乱码）。其 `Aura.uproject` 仍为 `EngineAssociation: "5.1"`，**未被修改**。
-  构建时请确认操作的是哪一份，避免改错目录。
-- **系统时间异常**：构建日志时间戳为 2026 年。时间偏差会影响 UBT 增量构建与 DDC / shader 缓存判断，建议校正。
+- **工具链一致性**：14.34 与引擎预编译库的档位匹配（引擎偏好表 rank 2，官方验证版本），是当前最优选择。
+- **v142 保留**：14.29 工具链保留在 VS2022 目录下，其他依赖 v142 的工程可继续使用，不受影响。
 - `Config/DefaultEngine.ini` 的碰撞配置存在成对的 `-` / `+` 重复项（原工程遗留），
   且该文件会被新引擎自动改写，升级后建议 `git diff` 审阅。
 
