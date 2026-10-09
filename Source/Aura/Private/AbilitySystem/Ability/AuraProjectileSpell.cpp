@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -49,14 +50,18 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			{
 				auto EffectContext = ASC->MakeEffectContext();
 				EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
-				NewProjectile->SpecHandle = ASC->MakeOutgoingSpec(
-	DamageEffectClass, GetAbilityLevel(), EffectContext);
+
+				auto SpecHandle = ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContext);
+
+				FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
+				const float		   DamageValue = 10.f; // You can replace this with your desired damage value
+				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.Damage, DamageValue);
+				NewProjectile->SpecHandle = SpecHandle;
 				UE_LOG(LogTemp, Log, TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName());
 				// GEngine->AddOnScreenDebugMessage(-1,
 				// 	5.f,
 				// 	FColor::Green,
 				// 	FString::Printf(TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName()));
-
 			}
 		}
 

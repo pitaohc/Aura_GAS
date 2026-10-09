@@ -46,6 +46,8 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
+	// Combat Tags
+	FGameplayTag Damage;
 
 private:
 	FAuraGameplayTags() = default;
