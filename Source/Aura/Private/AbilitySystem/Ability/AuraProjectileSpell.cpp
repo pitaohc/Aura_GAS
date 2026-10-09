@@ -18,14 +18,14 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
-
-	bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	AActor* SourceActor = GetAvatarActorFromActorInfo();
+	bool	bIsServer = SourceActor->HasAuthority();
 	if (!bIsServer)
 	{
 		return;
 	}
 
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(SourceActor))
 	{
 		check(ProjectileClass);
 
@@ -39,22 +39,21 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 		AAuraProjectile* NewProjectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(ProjectileClass,
 			Transform,
-			GetAvatarActorFromActorInfo(),
-			Cast<APawn>(GetAvatarActorFromActorInfo()),
+			SourceActor,
+			Cast<APawn>(SourceActor),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-		if (UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
-				GetAvatarActorFromActorInfo()))
+		if (UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor))
 		{
 			if (DamageEffectClass)
 			{
 				auto EffectContext = ASC->MakeEffectContext();
-				EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
+				EffectContext.AddSourceObject(SourceActor);
 
 				auto SpecHandle = ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContext);
 
 				FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
-				const float		   DamageValue = 10.f; // You can replace this with your desired damage value
+				const float		   DamageValue = Damage.GetValueAtLevel(GetAbilityLevel());
 				UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.Damage, DamageValue);
 				NewProjectile->SpecHandle = SpecHandle;
 				UE_LOG(LogTemp, Log, TEXT("Projectile SpecHandle: %s"), *DamageEffectClass->GetName());
