@@ -52,4 +52,10 @@ protected:
 	virtual void InitializeDefaultAttributes() const;
 
 	void InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
+
+public:
+	virtual UAnimMontage* GetHitReactMontage_Implementation() const override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

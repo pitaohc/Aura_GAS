@@ -48,6 +48,8 @@ public:
 	FGameplayTag InputTag_4;
 	// Combat Tags
 	FGameplayTag Damage;
+	// Effect Tags
+	FGameplayTag Effect_HitReact;
 
 private:
 	FAuraGameplayTags() = default;
