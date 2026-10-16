@@ -59,4 +59,6 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	Tags.InputTag_4 = Manager.AddNativeGameplayTag(FName("InputTag.4"), FString("Input Tag for Keyboard 4"));
 
 	Tags.Damage = Manager.AddNativeGameplayTag(FName("Damage"), FString("Damage"));
+	
+	Tags.Effect_HitReact = Manager.AddNativeGameplayTag(FName("Effect.HitReact"), FString("Tag granted when Hit Reacting"));
 }

@@ -56,4 +56,12 @@ public:
 	ECharacterClass CharacterClass = ECharacterClass::Invalid;
 
 	virtual void InitializeDefaultAttributes() const override;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting = false;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
+	
+	void HitReactTagChange(const FGameplayTag Tag, int32 count);
 };
