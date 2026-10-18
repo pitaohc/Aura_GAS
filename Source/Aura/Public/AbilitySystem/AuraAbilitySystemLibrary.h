@@ -23,6 +23,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 	
-	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Data")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject,const ECharacterClass CharacterClass,const float Level,UAbilitySystemComponent* ASC);
+	
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|Data")
+	static void InitializeDefaultAbilities(const UObject* WorldContextObject,UAbilitySystemComponent* ASC);
 };

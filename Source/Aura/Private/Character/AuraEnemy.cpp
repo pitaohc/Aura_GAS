@@ -46,7 +46,7 @@ void AAuraEnemy::BeginPlay()
 			});
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data) {
-				OnHealthChanged.Broadcast(Data.NewValue);
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			});
 		
 		OnHealthChanged.Broadcast(AuraAS->GetHealth());
@@ -63,7 +63,7 @@ void AAuraEnemy::InitAbilityActorInfo()
 	if (auto* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
 	{
 		AuraASC->AbilityActorInfoSet();
-		InitializeDefaultAttributes();
+		InitializeDefaultAttributesAndAbilities();
 	}
 }
 
@@ -98,13 +98,15 @@ int32 AAuraEnemy::GetPlayerLevel() const
 	return Level;
 }
 
-void AAuraEnemy::InitializeDefaultAttributes() const
+void AAuraEnemy::InitializeDefaultAttributesAndAbilities() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,CharacterClass,GetPlayerLevel(),GetAbilitySystemComponent());
+	UAuraAbilitySystemLibrary::InitializeDefaultAbilities(this,GetAbilitySystemComponent());
 }
 
-void AAuraEnemy::HitReactTagChange(const FGameplayTag Tag, int32 count)
+void AAuraEnemy::HitReactTagChange(const FGameplayTag Tag,const int32 Count)
 {
-	bHitReacting = count > 0;
+	UE_LOG(LogTemp,Display,TEXT("HitReactTagChange count:%d"),Count);
+	bHitReacting = Count > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0 : BaseWalkSpeed;
 }

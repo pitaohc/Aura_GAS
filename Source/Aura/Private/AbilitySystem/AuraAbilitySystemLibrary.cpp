@@ -110,3 +110,24 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 		VitalAttributesContextHandle);
 	ASC->ApplyGameplayEffectSpecToTarget(*VitalAttributesSpecHandle.Data.Get(), ASC);
 }
+
+void UAuraAbilitySystemLibrary::InitializeDefaultAbilities(const UObject* WorldContextObject,
+	UAbilitySystemComponent* ASC)
+{
+	AAuraGameModeBase* GameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (!GameMode)
+	{
+		return;
+	}
+	UCharacterClassInfo* CharacterClassInfo = GameMode->CharacterClassInfo;
+	if (!CharacterClassInfo)
+	{
+		return;
+	}
+	for (auto AbilityClass : CharacterClassInfo->DefaultAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec{ AbilityClass, 1 };
+		ASC->GiveAbility(AbilityClass);
+	}
+	
+}

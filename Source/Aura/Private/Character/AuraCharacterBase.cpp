@@ -49,7 +49,7 @@ void AAuraCharacterBase::BeginPlay()
 
 void AAuraCharacterBase::InitAbilityActorInfo() {}
 
-void AAuraCharacterBase::InitializeDefaultAttributes() const
+void AAuraCharacterBase::InitializeDefaultAttributesAndAbilities() const
 {
 	if (DefaultPrimaryAttributeEffect)
 	{

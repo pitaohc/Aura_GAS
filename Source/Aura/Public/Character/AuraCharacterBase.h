@@ -49,7 +49,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 
-	virtual void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributesAndAbilities() const;
 
 	void InitializeAttributes(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 

@@ -173,6 +173,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				
 				UE_LOG(LogTemp, Error, TEXT("Incoming damage is false %s"),*actor->GetName());
 			}
+			else
+			{
+				auto* asc =  GetOwningAbilitySystemComponent();
+				FGameplayTagContainer AbilityTags;
+				AbilityTags.AddTag(FAuraGameplayTags::Get().Effect_HitReact);
+				asc->TryActivateAbilitiesByTag(AbilityTags);
+			}
 		}
 	}
 }
