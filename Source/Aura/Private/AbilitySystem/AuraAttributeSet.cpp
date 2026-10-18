@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -172,6 +173,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				auto* actor = asc->GetAvatarActor();
 				
 				UE_LOG(LogTemp, Error, TEXT("Incoming damage is false %s"),*actor->GetName());
+				if (ICombatInterface* ActorWithCombat = Cast<ICombatInterface>(actor))
+				{
+					UE_LOG(LogTemp, Error, TEXT("Actor %s Die"),*actor->GetName());
+					ActorWithCombat->Die();
+				}
 			}
 			else
 			{

@@ -64,4 +64,10 @@ public:
 	float BaseWalkSpeed = 250.f;
 	
 	void HitReactTagChange(const FGameplayTag Tag,const int32 Count);
+	
+	// Die 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Combat")
+	float LifeSpanTimeAfterDie = 1.f;
+	
+	virtual void Die() override;
 };
