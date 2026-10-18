@@ -110,3 +110,9 @@ void AAuraEnemy::HitReactTagChange(const FGameplayTag Tag,const int32 Count)
 	bHitReacting = Count > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0 : BaseWalkSpeed;
 }
+
+void AAuraEnemy::Die()
+{
+	Super::Die();
+	SetLifeSpan(LifeSpanTimeAfterDie); // 延迟销毁
+}

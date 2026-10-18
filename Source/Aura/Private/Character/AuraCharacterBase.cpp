@@ -79,3 +79,29 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation() const
 {
 	return HitReactMontage;
 }
+
+void AAuraCharacterBase::Die()
+{
+	// 只会在Server调用
+	weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld,false));
+	MulticastHandleDeath();
+}
+
+void AAuraCharacterBase::MulticastHandleDeath_Implementation()
+{
+	// Client / Server 都会调用
+	
+	// 设置武器掉落
+	weapon->SetSimulatePhysics(true); // 启用物理模拟
+	weapon->SetEnableGravity(true); // 启用重力
+	weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly); // 只允许碰撞，不允许查询
+	
+	// 设置布娃娃
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+}
